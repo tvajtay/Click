@@ -1,13 +1,14 @@
 function [ ] = click(face_hint,whiskers)
-%CLICK automates the entirety of the Clack whisker tracker requireing only
-%that the working directory be WhiskerTracking and the movies to be
-%analyzed reside in a folder called data within WhiskerTracking. Input face
+%CLICK automates the entirety of the Clack whisker tracker requiring only
+%that: The working directory be WhiskerTracking. The movies to be
+%analyzed reside in a folder called data within WhiskerTracking. There 
+%exists a folder within WhiskerTracking called analyzed. And Input face
 %hint as a string and whiskers to detect as an integer
 %  
 
-%dos('python python/batch.py data -e trace -f *.mp4')
+dos('python python/batch.py data -e trace -f *.mp4')
 
-dos('python python/batch.py data -e whisker_convert --args="whisk1" -f *.whiskers')
+%dos('python python/batch.py data -e whisker_convert --args="whisk1" -f *.whiskers')
 
 cd data
 files = dir('*.whiskers');
@@ -25,18 +26,27 @@ for n = 1:W
 end
 fprintf('Conversion complete')
 
-stringc = sprintf('python python/batch.py data -e classify --args="%s --px2mm 0.04 -n %f" -f *.measurements',face_hint,whiskers);
+stringc = sprintf('python python/batch.py data -e classify --args="%s --px2mm 0.04 -n %1.0f" -f *.measurements',face_hint,whiskers);
 dos(stringc);
 
-stringrc = sprintf('python python/batch.py data -e reclassify --args="-n %f" -f *.measurements', whiskers);
+stringrc = sprintf('python python/batch.py data -e reclassify -f *.measurements');
 dos(stringrc);
 
+cd data
 measurements_files = dir('*.measurements');
+cd ..
 
-for file = measurements_files 
-
-        table = LoadMeasurements(file.name);
-        save(file.name,table);      
+d = size(measurements_files);
+d = d(1);
+for i = 1:d 
+        file = measurements_files(i);
+        B = ['data/' file.name];
+        table = LoadMeasurements(B);
+        cd analyzed
+        file = file(1:end-12);
+        file = [file 'mat'];
+        save(file,table);
+        cd ..
 end
 clear
 end
