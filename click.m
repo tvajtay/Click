@@ -2,11 +2,11 @@ function [ ] = click(face_hint,whiskers)
 %CLICK automates the entirety of the Clack whisker tracker requiring only
 %that: The working directory be WhiskerTracking. The movies to be
 %analyzed reside in a folder called data within WhiskerTracking. There 
-%exists a folder within WhiskerTracking called analyzed. And Input face
-%hint as a string and whiskers to detect as an integer
+%exists a folder within WhiskerTracking called analyzed. And Input 'face
+%hint' as a string and "whiskers" as an integer
 %  
 
-dos('python python/batch.py data -e trace -f *.mp4')
+dos('python python/batch.py data -e trace -f *.tif')
 
 %dos('python python/batch.py data -e whisker_convert --args="whisk1" -f *.whiskers')
 
@@ -43,9 +43,10 @@ for i = 1:d
         B = ['data/' file.name];
         table = LoadMeasurements(B);
         cd analyzed
-        file = file(1:end-12);
-        file = [file 'mat'];
-        save(file,table);
+        file.name = file.name(1:end-12);
+        file.name = [file.name 'mat'];
+        name = file.name;
+        save(name, 'table');
         cd ..
 end
 clear
