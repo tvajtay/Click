@@ -1,4 +1,4 @@
-# Click
+# Click v1.0
 Simple MATLAB script to automate all components of Clack Whisker Tracker
 
 Uses version 1.1.0d of Clack Whisker Tracker and Matlab 2013
