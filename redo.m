@@ -1,11 +1,17 @@
 function [] = redo(whiskers, path)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%REDO a offshoot of the click function that will re-plot the figures for
+%the individual and average whiskers after the re-tracking/corrections made
+%to the whiskers files via the Clack WhiskerTracking GUI. Input arguments
+%are an integer value of the number of whiskers and the path to the data
+%directory as a string.
+% Tom Vajtay 07/2016 Rutgers University
 
-cd(path)
+
+working_directory = 'C:\Users\margolislab\Desktop\WhiskerTracking'; %modify this pathway to the WhiskerTracking directory
+
+cd(path);
 measurements_files = dir('*.measurements');
-cd C:\Users\margolislab\Desktop\WhiskerTracking
-
+cd(working_directory);
 d = size(measurements_files);
 d = d(1);
 for i = 1:d 
@@ -17,7 +23,8 @@ for i = 1:d
         name = [name 'mat'];
         save(name, 'table');
         fprintf('Saved data matrix for %s\n', file.name);
-        cd C:\Users\margolislab\Desktop\WhiskerTracking
+        cd(working_directory);
+
 end
 
 cd(path)
@@ -89,6 +96,7 @@ for i = 1:F
     close all
 end    
 fprintf('Redo complete \n');
-cd C:\Users\margolislab\Desktop\WhiskerTracking
+cd(working_directory);
+
 end
 

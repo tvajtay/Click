@@ -4,12 +4,13 @@ function [ ] = click(face_hint,whiskers,path)
 %Tom Vajtay 07/2016 Rutgers University
 %  
 
+working_directory = 'C:\Users\margolislab\Desktop\WhiskerTracking'; %modify this path to the path of WhiskerTracking
 tracer = sprintf('python python/batch.py "%s" -e trace -f *.tif', path);
 dos(tracer);
 
 cd(path)
 files = dir('*.whiskers');
-cd C:\Users\margolislab\Desktop\WhiskerTracking
+cd(working_directory); 
 M = size(files);
 M = M(1);
 for n = 1:M
@@ -25,7 +26,7 @@ fprintf('Measurement complete\n')
 
 cd(path)
 files = dir('*.measurements');
-cd C:\Users\margolislab\Desktop\WhiskerTracking
+cd(working_directory); 
 M = size(files);
 M = M(1);
 for n = 1:M
@@ -38,7 +39,8 @@ fprintf('Classification complete\n')
 
 cd(path)
 files1 = dir('*.measurements');
-cd C:\Users\margolislab\Desktop\WhiskerTracking
+cd(working_directory); 
+
 S = size(files1);
 S = S(1);
 for n = 1:S
@@ -52,7 +54,7 @@ fprintf('Reclassification complete\n')
 
 cd(path)
 measurements_files = dir('*.measurements');
-cd C:\Users\margolislab\Desktop\WhiskerTracking
+cd(working_directory); 
 
 d = size(measurements_files);
 d = d(1);
@@ -66,7 +68,8 @@ for i = 1:d
         name = [name 'mat'];
         save(name, 'table');
         fprintf('Saved data matrix for %s\n', file.name);
-        cd C:\Users\margolislab\Desktop\WhiskerTracking
+        cd(working_directory); 
+
 end
 
 cd(path)
@@ -139,6 +142,7 @@ for i = 1:F
     
 end
 fprintf('Click complete \n')
-cd C:\Users\margolislab\Desktop\WhiskerTracking
+cd(working_directory); 
+
 end
 
