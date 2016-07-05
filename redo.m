@@ -6,7 +6,24 @@ cd data
 measurements_files = dir('*.measurements');
 cd ..
 
-delete('/analyzed/*.fig');
+d = size(measurements_files);
+d = d(1);
+for i = 1:d 
+        file = measurements_files(i);
+        B = ['data/' file.name];
+        table = LoadMeasurements(B);
+        cd analyzed
+        fprintf('Loading Measurements file for %s \n',file.name);
+        name = file.name(1:end-12);
+        name = [name 'mat'];
+        save(name, 'table');
+        cd ..
+end
+
+cd data
+measurements_files = dir('*.measurements');
+cd ..
+
 d = size(measurements_files);
 d = d(1);
 for i = 1:d 
@@ -17,6 +34,7 @@ for i = 1:d
         name = file.name(1:end-12);
         name = [name 'mat'];
         save(name, 'table');
+        fprintf('Saved data matrix for %s\n', file.name);
         cd ..
 end
 
@@ -74,16 +92,20 @@ for i = 1:F
     ylabel('angle');
     header = directory(i).name;
     header = header(1:end-4);
-    ER = find(data_array == 0);
+    ER = sum(find(data_array == 0));
     if ER > 0
         figname = sprintf('%s-ERRORS', header);
+        fprintf('ERROR file %s has a gap in data, please rectify \n', directory(i).name);
     else 
         figname = sprintf('%s-Average', header);
+        fprintf('No errors in %s\n', directory(i).name);
     end
     saveas(gcf, figname, 'fig');
     close all
-    fprintf('Finished %s\n', directory(i).name);
+    
 end
+cd ..
+fprintf('Redo complete \n');
 
 end
 

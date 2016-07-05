@@ -26,7 +26,7 @@ for n = 1:M
     stringm = sprintf('measure --face %s data/%s data/%s ', face_hint, file.name, measures);
     dos(stringm)
 end
-fprintf('Measurement complete')
+fprintf('Measurement complete\n')
 
 cd data
 files = dir('*.measurements');
@@ -39,7 +39,7 @@ for n = 1:M
     stringc = sprintf('classify data/%s data/%s %s --px2mm 0.04 -n %1.0f ', file.name, file.name, face_hint, whiskers);
     dos(stringc)
 end
-fprintf('Classification complete')
+fprintf('Classification complete\n')
 
 cd data
 files1 = dir('*.measurements');
@@ -52,7 +52,7 @@ for n = 1:S
     stringc = sprintf('reclassify -n %1.0f data/%s data/%s ', whiskers, file.name, file.name);
     dos(stringc)
 end
-fprintf('Reclassification complete')
+fprintf('Reclassification complete\n')
 
 
 cd data
@@ -66,6 +66,7 @@ for i = 1:d
         B = ['data/' file.name];
         table = LoadMeasurements(B);
         cd analyzed
+        fprintf('Loading Measurements file for %s \n',file.name);
         name = file.name(1:end-12);
         name = [name 'mat'];
         save(name, 'table');
@@ -86,6 +87,7 @@ for i = 1:d
         name = file.name(1:end-12);
         name = [name 'mat'];
         save(name, 'table');
+        fprintf('Saved data matrix for %s\n', file.name);
         cd ..
 end
 
@@ -143,16 +145,19 @@ for i = 1:F
     ylabel('angle');
     header = directory(i).name;
     header = header(1:end-4);
-    ER = find(data_array == 0);
+    ER = sum(find(data_array == 0));
     if ER > 0
         figname = sprintf('%s-ERRORS', header);
+        fprintf('ERROR file %s has a gap in data, please rectify \n', directory(i).name);
     else 
         figname = sprintf('%s-Average', header);
+        fprintf('No errors in %s\n', directory(i).name);
     end
     saveas(gcf, figname, 'fig');
     close all
     
 end
-
+cd ..
+fprintf('Click complete \n')
 end
 
