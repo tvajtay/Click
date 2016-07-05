@@ -1,44 +1,26 @@
-function [] = redo(whiskers)
+function [] = redo(whiskers, path)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
-cd data
+cd(path)
 measurements_files = dir('*.measurements');
-cd ..
+cd C:\Users\margolislab\Desktop\WhiskerTracking
 
 d = size(measurements_files);
 d = d(1);
 for i = 1:d 
         file = measurements_files(i);
-        B = ['data/' file.name];
+        B = [path '\' file.name];
         table = LoadMeasurements(B);
-        cd analyzed
-        fprintf('Loading Measurements file for %s \n',file.name);
-        name = file.name(1:end-12);
-        name = [name 'mat'];
-        save(name, 'table');
-        cd ..
-end
-
-cd data
-measurements_files = dir('*.measurements');
-cd ..
-
-d = size(measurements_files);
-d = d(1);
-for i = 1:d 
-        file = measurements_files(i);
-        B = ['data/' file.name];
-        table = LoadMeasurements(B);
-        cd analyzed
+        cd(path)
         name = file.name(1:end-12);
         name = [name 'mat'];
         save(name, 'table');
         fprintf('Saved data matrix for %s\n', file.name);
-        cd ..
+        cd C:\Users\margolislab\Desktop\WhiskerTracking
 end
 
-cd analyzed
+cd(path)
 directory = dir('*.mat');
 F = size(directory);
 F = F(1);
@@ -81,6 +63,10 @@ for i = 1:F
     ylabel('angle');
     header = directory(i).name;
     header = header(1:end-4);
+    ER = sum(find(data_array == 0));
+    if ER > 0
+        header = [header '-ERRORS'];
+    end
     figname = sprintf('%s-Individual Whiskers', header);
     saveas(gcf, figname, 'fig');
     close all
@@ -92,7 +78,6 @@ for i = 1:F
     ylabel('angle');
     header = directory(i).name;
     header = header(1:end-4);
-    ER = sum(find(data_array == 0));
     if ER > 0
         figname = sprintf('%s-ERRORS', header);
         fprintf('ERROR file %s has a gap in data, please rectify \n', directory(i).name);
@@ -102,10 +87,8 @@ for i = 1:F
     end
     saveas(gcf, figname, 'fig');
     close all
-    
-end
-cd ..
+end    
 fprintf('Redo complete \n');
-
+cd C:\Users\margolislab\Desktop\WhiskerTracking
 end
 
