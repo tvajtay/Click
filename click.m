@@ -17,7 +17,7 @@ for n = 1:M
     measures = file.name;
     measures = measures(1:end-8);
     measures = [measures 'measurements'];
-    fprintf(1,'Converting %s\n',file.name);
+    fprintf(1,'Measuring %s\n',file.name);
     stringm = sprintf('measure --face %s "%s\\%s" "%s\\%s" ', face_hint, path, file.name, path, measures);
     dos(stringm)
 end
@@ -30,7 +30,7 @@ M = size(files);
 M = M(1);
 for n = 1:M
     file = files(n);
-    fprintf(1,'Converting %s\n',file.name);
+    fprintf(1,'Classifying %s\n',file.name);
     stringc = sprintf('classify "%s\\%s" "%s\\%s" %s --px2mm 0.04 -n %1.0f ', path, file.name, path, file.name, face_hint, whiskers);
     dos(stringc)
 end
@@ -43,7 +43,7 @@ S = size(files1);
 S = S(1);
 for n = 1:S
     file = files1(n);
-    fprintf(1,'Converting %s\n',file.name);
+    fprintf(1,'Re-Classifying %s\n',file.name);
     stringc = sprintf('reclassify -n %1.0f "%s\\%s" "%s\\%s" ', whiskers, path, file.name, path, file.name);
     dos(stringc)
 end
@@ -62,23 +62,6 @@ for i = 1:d
         table = LoadMeasurements(B);
         cd(path)
         fprintf('Loading Measurements file for %s \n',file.name);
-        name = file.name(1:end-12);
-        name = [name 'mat'];
-        save(name, 'table');
-        cd C:\Users\margolislab\Desktop\WhiskerTracking
-end
-
-cd(path)
-measurements_files = dir('*.measurements');
-cd C:\Users\margolislab\Desktop\WhiskerTracking
-
-d = size(measurements_files);
-d = d(1);
-for i = 1:d 
-        file = measurements_files(i);
-        B = [path '\' file.name];
-        table = LoadMeasurements(B);
-        cd(path)
         name = file.name(1:end-12);
         name = [name 'mat'];
         save(name, 'table');
