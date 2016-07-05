@@ -1,16 +1,16 @@
-function [] = redo(whiskers)
+function [] = redo(whiskers, path)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
-cd data
+cd(path)
 measurements_files = dir('*.measurements');
-cd ..
+cd C:\Users\margolislab\Desktop\WhiskerTracking
 
 d = size(measurements_files);
 d = d(1);
 for i = 1:d 
         file = measurements_files(i);
-        B = ['data/' file.name];
+        B = [path '/' file.name];
         table = LoadMeasurements(B);
         cd analyzed
         fprintf('Loading Measurements file for %s \n',file.name);
@@ -28,7 +28,7 @@ d = size(measurements_files);
 d = d(1);
 for i = 1:d 
         file = measurements_files(i);
-        B = ['data/' file.name];
+        B = [path '/' file.name];
         table = LoadMeasurements(B);
         cd analyzed
         name = file.name(1:end-12);
