@@ -65,7 +65,7 @@ for i = 1:F
     header = header(1:end-4);
     ER = sum(find(data_array == 0));
     if ER > 0
-        header = ['ERROR-' header];
+        header = [header '-ERRORS'];
     end
     figname = sprintf('%s-Individual Whiskers', header);
     saveas(gcf, figname, 'fig');
@@ -89,6 +89,6 @@ for i = 1:F
     close all
 end    
 fprintf('Redo complete \n');
-
+cd C:\Users\margolislab\Desktop\WhiskerTracking
 end
 
