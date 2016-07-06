@@ -12,7 +12,7 @@ working_directory = 'C:\Users\margolislab\Desktop\WhiskerTracking'; %modify this
 cd(path);
 measurements_files = dir('*.measurements');
 previous_figs = dir('*.fig');
-delete(previous_figs);
+delete(previous_figs.name);
 cd(working_directory);
 d = size(measurements_files);
 d = d(1);
@@ -63,6 +63,7 @@ for i = 1:F
     
     for t = 1:whiskers
         c = {'g' 'r' 'c' 'm' 'y' 'k'};
+        subplot(1,2,1);
         plot(data_array(:,t), c{t});
         hold on
     end
@@ -70,16 +71,17 @@ for i = 1:F
     title(H);
     xlabel('Frame');
     ylabel('angle');
-    header = directory(i).name;
-    header = header(1:end-4);
+    %header = directory(i).name;
+    %header = header(1:end-4);
     ER = sum(find(data_array == 0));
-    if ER > 0
-        header = [header '-ERRORS'];
-    end
-    figname = sprintf('%s-Individual Whiskers', header);
-    saveas(gcf, figname, 'fig');
-    close all
+    %if ER > 0
+     %   header = [header '-ERRORS'];
+    %end
+    %figname = sprintf('%s-Individual Whiskers', header);
+    %saveas(gcf, figname, 'fig');
+    %close all
     average_angle = mean(data_array, 2);
+    subplot(1,2,2);
     plot(average_angle, 'b');
     H = sprintf('%s\n  Average Whisker angle', directory(i).name);
     title(H);
@@ -96,7 +98,8 @@ for i = 1:F
     end
     saveas(gcf, figname, 'fig');
     close all
-end    
+    
+end
 fprintf('Redo complete \n');
 cd(working_directory);
 
