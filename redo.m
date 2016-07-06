@@ -11,6 +11,8 @@ working_directory = 'C:\Users\margolislab\Desktop\WhiskerTracking'; %modify this
 
 cd(path);
 measurements_files = dir('*.measurements');
+previous_figs = dir('*.fig');
+delete(previous_figs);
 cd(working_directory);
 d = size(measurements_files);
 d = d(1);
@@ -87,7 +89,7 @@ for i = 1:F
     header = header(1:end-4);
     if ER > 0
         figname = sprintf('%s-ERRORS', header);
-        fprintf('ERROR file %s has a gap in data, please rectify \n', directory(i).name);
+        fprintf('ERROR %s has a gap in data, please rectify \n', directory(i).name);
     else 
         figname = sprintf('%s-Average', header);
         fprintf('No errors in %s\n', directory(i).name);
