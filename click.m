@@ -150,16 +150,41 @@ status = 1;
         end  
     end
 
-while status
-cd(path)
-b = dir();
-files = dir('*.tif');
-isub = [b(:).isdir];
-fold_detect = sum(isub);
-file_detect = size(files);
-file_detect = file_detect(1);
+    function [fold_detect,file_detect] = detector(path)
+        cd(path)
+        b = dir();
+        files = dir('*.tif');
+        isub = [b(:).isdir];
+        nameFolds = {b(isub).name}';
+        nameFolds(ismember(nameFolds,{'.','..'})) = [];
+        fold_detect = size(nameFolds, 1);
+        file_detect = size(files, 1);
+    end
+    
+    function [name_Folds] = fold_list(path)
+        cd(path)
+        b = dir();
+        isub = [b(:).isdir];
+        nameFolds = {b(isub).name}';
+        nameFolds(ismember(nameFolds,{'.','..'})) = [];
+        name_Folds = nameFolds;
+    end
 
+[fold,fil] = detector(start_directory);
 
+if fil > 0
+    clacker(face_hint, start_directory, whiskers);
 end
+
+if fold > 0
+    
+    
+    
+    
+    
+elseif fold == 0
+    finish = datestr(now);
+    fprintf('Click completed at %s\n', finish);
+
 end
 
