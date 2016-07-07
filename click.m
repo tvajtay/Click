@@ -5,11 +5,12 @@ function [ ] = click(face_hint, start_directory, whiskers)
 %  
 
 working_directory = cd;
+addpath(cd)
 addpath matlab
 addpath(start_directory);
-status = 1;
 
     function clacker(face_hint, path, whiskers)
+        cd(working_directory);
         tracer = sprintf('python python/batch.py "%s" -e trace -f *.tif', path);
         dos(tracer);
 
@@ -119,15 +120,8 @@ status = 1;
             title(H);
             xlabel('Frame');
             ylabel('angle');
-            %header = directory(i).name;
-            %header = header(1:end-4);
-            %ER = sum(find(data_array == 0));
-            %if ER > 0
-             %   header = [header '-ERRORS'];
-            %end
-            %figname = sprintf('%s-Individual Whiskers', header);
-            %saveas(gcf, figname, 'fig');
-            %close all
+            
+            ER = sum(find(data_array == 0));
             average_angle = mean(data_array, 2);
             subplot(1,2,2);
             plot(average_angle, 'b');
@@ -160,31 +154,35 @@ status = 1;
         fold_detect = size(nameFolds, 1);
         file_detect = size(files, 1);
     end
-    
-    function [name_Folds] = fold_list(path)
-        cd(path)
-        b = dir();
-        isub = [b(:).isdir];
-        nameFolds = {b(isub).name}';
-        nameFolds(ismember(nameFolds,{'.','..'})) = [];
-        name_Folds = nameFolds;
-    end
 
+        
+    
 [fold,fil] = detector(start_directory);
 
 if fil > 0
     clacker(face_hint, start_directory, whiskers);
+elseif fil == 0
+    fprintf('No tif files in the start directory\n');
 end
 
 if fold > 0
-    
-    
-    
-    
-    
+    target = [start_directory '\**\*.'];
+    fprintf('Scanning all subdirectories from starting directory, please wait\n');
+    D = rdir(target);             %// List of all sub-directories
+    for k = 1:length(D)
+        currpath = D(k).name;
+        [~,fil] = detector(currpath);
+        fprintf('Checking %s for tif files\n', currpath);
+        if fil > 0
+            clacker(face_hint, currpath, whiskers);
+        end
+    end
+    finish = datestr(now);
+    fprintf('Click completed at %s\n', finish);
+    cd(working_directory);
 elseif fold == 0
     finish = datestr(now);
     fprintf('Click completed at %s\n', finish);
-
+end
 end
 
