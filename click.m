@@ -26,7 +26,7 @@ addpath(start_directory);
             measures = [measures 'measurements'];
             fprintf(1,'Measuring %s\n',file.name);
             stringm = sprintf('measure --face %s "%s\\%s" "%s\\%s" ', face_hint, path, file.name, path, measures);
-            dos(stringm)
+            dos(stringm);
         end
         fprintf('Measurement complete\n')
 
@@ -39,7 +39,7 @@ addpath(start_directory);
             file = files(n);
             fprintf(1,'Classifying %s\n',file.name);
             stringc = sprintf('classify "%s\\%s" "%s\\%s" %s --px2mm 0.04 -n %1.0f ', path, file.name, path, file.name, face_hint, whiskers);
-            dos(stringc)
+            dos(stringc);
         end
         fprintf('Classification complete\n')
 
@@ -53,7 +53,7 @@ addpath(start_directory);
             file = files1(n);
             fprintf(1,'Re-Classifying %s\n',file.name);
             stringc = sprintf('reclassify -n %1.0f "%s\\%s" "%s\\%s" ', whiskers, path, file.name, path, file.name);
-            dos(stringc)
+            dos(stringc);
         end
         fprintf('Reclassification complete\n')
 
