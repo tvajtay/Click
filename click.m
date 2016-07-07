@@ -116,7 +116,7 @@ addpath(start_directory);
                 plot(data_array(:,t), c{t});
                 hold on
             end
-            H = sprintf('%s\n Whisker angle', directory(i).name);
+            H = sprintf('%s\n Individual Whisker angle', directory(i).name);
             title(H);
             xlabel('Frame');
             ylabel('angle');
