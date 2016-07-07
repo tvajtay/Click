@@ -4,7 +4,7 @@ Simple MATLAB script to automate all components of Clack Whisker Tracker
 Uses version 1.1.0d of Whisk (https://openwiki.janelia.org/wiki/display/MyersLab/Whisker+Tracking+Downloads) and Matlab 2013 
 *(The "LoadMeasurements" matlab function included with Whisk only seems to work in matlab 2013 and perhaps older.)
 
-WhiskerTracking should be installed on the Desktop, and Click files should be extracted inside WhiskerTracking
+WhiskerTracking should be installed on the Desktop, and Click files should be extracted into WhiskerTracking
 
 The user can select any directory and "click" will batch process all tif files within that directory and all it's subdirectories. Movies within the datadir folder are first processed using the parallel batch trace processor provided with the Whisker Tracker.
 Then all data files are analyzed, matrix files created for each movie with individual and average whisker figures which are then output to the source datadir folder. 
