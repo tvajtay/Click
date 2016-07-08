@@ -6,6 +6,7 @@ function [] = redo(whiskers, start_directory)
 %directory as a string.
 % Tom Vajtay 07/2016 Rutgers University
 
+tstart = tic;
 working_directory = cd;
 addpath(cd)
 addpath matlab
@@ -139,9 +140,13 @@ if fold > 0
     finish = datestr(now);
     fprintf('Redo completed at %s\n', finish);
     cd(working_directory);
+    telapsed = toc(tstart);
+    fprintf('Click ran for %.2f seconds\n', telapsed);
 elseif fold == 0
     finish = datestr(now);
     fprintf('Redo completed at %s\n', finish);
+    telapsed = toc(tstart);
+    fprintf('Click ran for %.2f seconds\n', telapsed);
 end
 
 end
