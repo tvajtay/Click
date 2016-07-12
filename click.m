@@ -109,6 +109,8 @@ addpath(start_directory);
                     data_array(frame, L) = My_cell(j,8);
                 end
             end
+            
+            save(x, 'data_array');
 
             for t = 1:whiskers
                 c = {'g' 'r' 'c' 'm' 'y' 'k'};

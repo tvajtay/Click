@@ -1,4 +1,4 @@
-function [] = redo(whiskers, start_directory)
+function [] = redo(start_directory, whiskers)
 %REDO a offshoot of the click function that will re-plot the figures for
 %the individual and average whiskers after the re-tracking/corrections made
 %to the whiskers files via the Clack WhiskerTracking GUI. Input arguments
@@ -16,7 +16,9 @@ addpath(start_directory);
     cd(direction);
     measurements_files = dir('*.measurements');
     previous_figs = dir('*.fig');
+    if size(previous_figs, 1) > 0
     delete(previous_figs.name);
+    end
     cd(working_directory);
     d = size(measurements_files);
     d = d(1);
@@ -65,6 +67,8 @@ addpath(start_directory);
             end
         end
 
+        save(X, 'data_array');
+        
         for t = 1:whisks
             c = {'g' 'r' 'c' 'm' 'y' 'k'};
             subplot(1,2,1);
@@ -146,7 +150,7 @@ elseif fold == 0
     finish = datestr(now);
     fprintf('Redo completed at %s\n', finish);
     telapsed = toc(tstart);
-    fprintf('Click ran for %.2f seconds\n', telapsed);
+    fprintf('Redo ran for %.2f seconds\n', telapsed);
 end
 
 end
