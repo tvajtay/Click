@@ -95,9 +95,10 @@ addpath(start_directory);
             groups = [];
             data_array = zeros(frames,whiskers);
             figs = (whiskers - 1);
-            while figs >= 0
-                groups = [groups figs];
-                figs = figs - 1;
+            Ct = 0;
+            while Ct <= figs
+                groups = [groups Ct];
+                Ct = Ct + 1;
 
             end
 
@@ -110,10 +111,10 @@ addpath(start_directory);
                 end
             end
             
-            save(x, 'data_array');
+            save(X, 'data_array');
 
             for t = 1:whiskers
-                c = {'g' 'r' 'c' 'm' 'y' 'k'};
+                c = {'r' 'c' 'g' 'm' 'y' 'k'};
                 subplot(1,2,1);
                 plot(data_array(:,t), c{t});
                 hold on
@@ -121,21 +122,23 @@ addpath(start_directory);
             H = sprintf('%s\n Individual Whisker angle', directory(i).name);
             title(H);
             xlabel('Frame');
-            ylabel('angle');
+            ylabel('Angle');
             
             ER = sum(find(data_array == 0));
+            normal = mean(data_array(1:300,:));
+            data_array = bsxfun(@minus, data_array, normal);
             average_angle = mean(data_array, 2);
             subplot(1,2,2);
             plot(average_angle, 'b');
-            H = sprintf('%s\n  Average Whisker angle', directory(i).name);
+            H = sprintf('%s\n  Average Change in Whisker Angle', directory(i).name);
             title(H);
             xlabel('Frame');
-            ylabel('angle');
+            ylabel('Angle');
             header = directory(i).name;
             header = header(1:end-4);
             if ER > 0
                 figname = sprintf('%s-ERRORS', header);
-                fprintf('ERROR %s has a gap in data, please rectify \n', directory(i).name);
+                fprintf('ERROR %s has a gap in data \n', directory(i).name);
             else 
                 figname = sprintf('%s-Average', header);
                 fprintf('No errors in %s\n', directory(i).name);
@@ -169,7 +172,7 @@ end
 
 if fold > 0
     target = [start_directory '\**\*.'];
-    fprintf('Scanning all subdirectories from starting directory, please wait\n');
+    fprintf('Scanning all subdirectories from starting directory\n');
     D = rdir(target);             %// List of all sub-directories
     for k = 1:length(D)
         currpath = D(k).name;
@@ -186,9 +189,10 @@ if fold > 0
     fprintf('Click ran for %.2f seconds\n', telapsed);
 elseif fold == 0
     finish = datestr(now);
+    cd(working_directory);
     fprintf('Click completed at %s\n', finish);
     telapsed = toc(tstart);
-    fprintf('Click ran for %.2f seconds', telapsed);
+    fprintf('Click ran for %.2f seconds\n', telapsed);
 end
 end
 
