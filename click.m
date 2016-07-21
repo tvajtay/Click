@@ -1,6 +1,8 @@
 function [ ] = click(face_hint, start_directory, whiskers)
 %CLICK automates the entirety of the Clack whisker tracker. 
-%Input 'facehint' and 'start_directory' as a string and "whiskers" as an integer
+%Input 'facehint' and 'start_directory' as a string and "whiskers" as a
+%series of integers seperated by spaces within brackets.
+%usage: click('left', 'C:\Users\USER\Desktop\YOUR_START_DIRECTORY', [n n]);
 %Tom Vajtay 07/2016 Rutgers University
 %  
 tstart = tic;
@@ -9,9 +11,9 @@ addpath(cd)
 addpath matlab
 addpath(start_directory);
 
-    function clacker(face_hint, path, whiskers)
+    function clacker(face_hint, path, whisker)
         cd(working_directory);
-        tracer = sprintf('python python/batch.py "%s" -e trace -f *.tif', path);
+        tracer = sprintf('C:/Python27/python python/batch.py "%s" -e trace -f *.tif', path);
         dos(tracer);
 
         cd(path)
@@ -38,7 +40,7 @@ addpath(start_directory);
         for n = 1:M
             file = files(n);
             fprintf(1,'Classifying %s\n',file.name);
-            stringc = sprintf('classify "%s\\%s" "%s\\%s" %s --px2mm 0.04 -n %1.0f ', path, file.name, path, file.name, face_hint, whiskers);
+            stringc = sprintf('classify "%s\\%s" "%s\\%s" %s --px2mm 0.04 -n %1.0f ', path, file.name, path, file.name, face_hint, whisker);
             dos(stringc);
         end
         fprintf('Classification complete\n')
@@ -52,7 +54,7 @@ addpath(start_directory);
         for n = 1:S
             file = files1(n);
             fprintf(1,'Re-Classifying %s\n',file.name);
-            stringc = sprintf('reclassify -n %1.0f "%s\\%s" "%s\\%s" ', whiskers, path, file.name, path, file.name);
+            stringc = sprintf('reclassify -n %1.0f "%s\\%s" "%s\\%s" ', whisker, path, file.name, path, file.name);
             dos(stringc);
         end
         fprintf('Reclassification complete\n')
@@ -93,8 +95,8 @@ addpath(start_directory);
             rows = rows(1);
             frames = max(My_cell(:,1));
             groups = [];
-            data_array = zeros(frames,whiskers);
-            figs = (whiskers - 1);
+            data_array = zeros(frames,whisker);
+            figs = (whisker - 1);
             Ct = 0;
             while Ct <= figs
                 groups = [groups Ct];
@@ -113,7 +115,7 @@ addpath(start_directory);
             
             save(X, 'data_array');
 
-            for t = 1:whiskers
+            for t = 1:whisker
                 c = {'r' 'c' 'g' 'm' 'y' 'k'};
                 subplot(1,2,1);
                 plot(data_array(:,t), c{t});
@@ -163,9 +165,11 @@ addpath(start_directory);
         
     
 [fold,fil] = detector(start_directory);
-
+whisker_order = 0;
 if fil > 0
-    clacker(face_hint, start_directory, whiskers);
+    whisker_order = whisker_order + 1;
+    whisknum = whiskers(whisker_order);
+    clacker(face_hint, start_directory, whisknum);
 elseif fil == 0
     fprintf('No tif files in the start directory\n');
 end
@@ -179,7 +183,9 @@ if fold > 0
         [~,fil] = detector(currpath);
         fprintf('Checking %s for tif files\n', currpath);
         if fil > 0
-            clacker(face_hint, currpath, whiskers);
+            whisker_order = whisker_order + 1;
+            whisknum = whiskers(whisker_order);
+            clacker(face_hint, currpath, whisknum);
         end
     end
     finish = datestr(now);
