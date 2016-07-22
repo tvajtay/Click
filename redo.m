@@ -1,9 +1,8 @@
-function [] = redo(start_directory, whiskers)
+function [] = redo(start_directory)
 %REDO a offshoot of the click function that will re-plot the figures for
 %the individual and average whiskers after the re-tracking/corrections made
-%to the whiskers files via the Clack WhiskerTracking GUI. Input arguments
-%are an integer value of the number of whiskers and the path to the data
-%directory as a string.
+%to the whiskers files via the Clack WhiskerTracking GUI. Input argument is
+% the path to the data directory as a string.
 % Tom Vajtay 07/2016 Rutgers University
 
 tstart = tic;
@@ -12,7 +11,7 @@ addpath(cd)
 addpath matlab
 addpath(start_directory);
 
-    function redo_1(whisks, direction)
+    function redo_1(direction)
     cd(direction);
     measurements_files = dir('*.measurements');
     previous_figs = dir('*.fig');
@@ -20,8 +19,7 @@ addpath(start_directory);
     delete(previous_figs.name);
     end
     cd(working_directory);
-    d = size(measurements_files);
-    d = d(1);
+    d = size(measurements_files, 1);
     for i = 1:d 
             file = measurements_files(i);
             B = [direction '\' file.name];
@@ -49,6 +47,7 @@ addpath(start_directory);
         rows = size(My_cell);
         rows = rows(1);
         frames = max(My_cell(:,1));
+        whisks = (max(My_cell(:,3)) + 1);
         groups = [];
         data_array = zeros(frames,whisks);
         figs = (whisks - 1);
@@ -124,7 +123,7 @@ addpath(start_directory);
 
 [fold,fil] = detector(start_directory);
 if fil > 0
-    redo_1(whiskers,start_directory);
+    redo_1(start_directory);
 elseif fil == 0
     fprintf('No whiskers files in the start directory\n');
 end
@@ -138,7 +137,7 @@ if fold > 0
         [~,fil] = detector(currpath);
         fprintf('Checking %s for whiskers files\n', currpath);
         if fil > 0
-            redo_1(whiskers,start_directory);
+            redo_1(start_directory);
         end
     end
     finish = datestr(now);
