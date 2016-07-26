@@ -80,10 +80,13 @@ addpath(start_directory);
                     plot(data_array(:,t), c{t});
                     hold on
                 end
-                H = sprintf('%s\n Whisker angle', directory(i).name(1:end-11));
+                H = sprintf('%s\n Individual Whisker angle', directory(i).name(1:end-11));
                 title(H);
                 xlabel('Frame');
                 ylabel('angle');
+                
+                normal = mean(data_array(1:300,:));
+                data_array = bsxfun(@minus, data_array, normal);
                 average_angle = nanmean(data_array, 2);
                 subplot(1,2,2);
                 plot(average_angle, 'b');
@@ -94,7 +97,7 @@ addpath(start_directory);
                 header = directory(i).name(1:end-11);
                 if ER > 0
                     figname = sprintf('%s-ERRORS', header);
-                    fprintf('ERROR %s.mat has a gap in data, please rectify \n', header);
+                    fprintf('ERROR %s.mat has a gap in data\n', header);
                 else
                     figname = sprintf('%s-Average', header);
                     fprintf('No errors in %s.mat\n', header);
@@ -110,7 +113,7 @@ addpath(start_directory);
         function [fold_detect,file_detect] = detector(path)
             cd(path)
             b = dir();
-            files = dir('*.whiskers');
+            files = dir('*ERRORS.fig');
             isub = [b(:).isdir];
             nameFolds = {b(isub).name}';
             nameFolds(ismember(nameFolds,{'.','..'})) = [];
@@ -132,9 +135,10 @@ addpath(start_directory);
             for k = 1:length(D)
                 currpath = D(k).name;
                 [~,fil] = detector(currpath);
-                fprintf('Checking %s for whiskers files\n', currpath);
+                fprintf('Checking %s for ERRORS files\n', currpath);
                 if fil > 0
-                    redo_1(start_directory);
+                    fprintf('ERRORS found!\n');
+                    redo_1(currpath);
                 end
             end
             finish = datestr(now);
@@ -143,6 +147,7 @@ addpath(start_directory);
             telapsed = toc(tstart);
             fprintf('Redo ran for %.2f seconds\n', telapsed);
         elseif fold == 0
+            cd(working_directory);
             finish = datestr(now);
             fprintf('Redo completed at %s\n', finish);
             telapsed = toc(tstart);
