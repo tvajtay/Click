@@ -141,7 +141,7 @@ addpath(start_directory);
             fprintf('Redo completed at %s\n', finish);
             cd(working_directory);
             telapsed = toc(tstart);
-            fprintf('Click ran for %.2f seconds\n', telapsed);
+            fprintf('Redo ran for %.2f seconds\n', telapsed);
         elseif fold == 0
             finish = datestr(now);
             fprintf('Redo completed at %s\n', finish);
