@@ -68,6 +68,10 @@ addpath(start_directory);
                     end
                 end
                 
+                ER = size(find(data_array == 0), 1);
+            if ER > 0
+               data_array(data_array == 0) = NaN;
+            end
                 save(X, 'data_array');
                 
                 for t = 1:whisks
@@ -80,8 +84,7 @@ addpath(start_directory);
                 title(H);
                 xlabel('Frame');
                 ylabel('angle');
-                ER = sum(find(data_array == 0));
-                average_angle = mean(data_array, 2);
+                average_angle = nanmean(data_array, 2);
                 subplot(1,2,2);
                 plot(average_angle, 'b');
                 H = sprintf('%s\n  Average Whisker angle', directory(i).name(1:end-11));

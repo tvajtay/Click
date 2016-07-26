@@ -52,10 +52,14 @@ addpath(start_directory);
         S = size(files1);
         S = S(1);
         for n = 1:S
+            try
             file = files1(n);
             fprintf(1,'Re-Classifying %s\n',file.name);
             stringc = sprintf('reclassify -n %1.0f "%s\\%s" "%s\\%s" ', whisker, path, file.name, path, file.name);
             dos(stringc);
+            catch
+                continue;
+            end
         end
         fprintf('Reclassification complete\n')
 
@@ -101,7 +105,6 @@ addpath(start_directory);
             while Ct <= figs
                 groups = [groups Ct];
                 Ct = Ct + 1;
-
             end
 
             for j = 1:rows
@@ -113,6 +116,11 @@ addpath(start_directory);
                 end
             end
             
+            ER = size(find(data_array == 0), 1);
+            if ER > 0
+               data_array(data_array == 0) = NaN;
+               
+            end
             save(X, 'data_array');
 
             for t = 1:whisker
@@ -126,10 +134,10 @@ addpath(start_directory);
             xlabel('Frame');
             ylabel('Angle');
             
-            ER = sum(find(data_array == 0));
+            
             normal = mean(data_array(1:300,:));
             data_array = bsxfun(@minus, data_array, normal);
-            average_angle = mean(data_array, 2);
+            average_angle = nanmean(data_array, 2);
             subplot(1,2,2);
             plot(average_angle, 'b');
             H = sprintf('%s\n  Average Change in Whisker Angle', directory(i).name);
