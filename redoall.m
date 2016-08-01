@@ -85,7 +85,7 @@ function redo_1(direction)
             plot(data_array(:,t), c{t});
             hold on
         end
-        H = sprintf('%s\n Individual Whisker angle', directory(i).name(1:end-3));
+        H = sprintf('%s\n Individual Whisker angle', directory(i).name(1:end-4));
         title(H);
         xlabel('Frame');
         ylabel('angle');
@@ -95,17 +95,17 @@ function redo_1(direction)
         average_angle = nanmean(data_array, 2);
         subplot(1,2,2);
         plot(average_angle, 'b');
-        H = sprintf('%s\n  Average Whisker angle', directory(i).name(1:end-3));
+        H = sprintf('%s\n  Average Whisker angle', directory(i).name(1:end-4));
         title(H);
         xlabel('Frame');
         ylabel('angle');
-        header = directory(i).name(1:end-3);
+        header = directory(i).name(1:end-4);
         if ER > 0
             figname = sprintf('%s-ERRORS', header);
-            fprintf('ERROR %smat has a gap in data\n', header);
+            fprintf('ERROR %s.mat has a gap in data\n', header);
         else
             figname = sprintf('%s-Average', header);
-            fprintf('No errors in %smat\n', header);
+            fprintf('No errors in %s.mat\n', header);
         end
         saveas(gcf, figname, 'fig');
         close all
