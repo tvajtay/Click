@@ -1,4 +1,4 @@
-# Click v2.4
+# Click v2.5
 Simple MATLAB script to automate all components of Clack Whisker Tracker
 
 Uses version 1.1.0d of Whisk (https://openwiki.janelia.org/wiki/display/MyersLab/Whisker+Tracking+Downloads), Python 2.7, and  Matlab 2013a *(The "LoadMeasurements" matlab function included with Whisk only seems to work in matlab 2013a and perhaps older.)
