@@ -13,67 +13,16 @@ tstart = tic();
     end
 
     function [] = jit(curr_file)     %The actual function
-        info = imfinfo(curr_file); %creates structure for every frame in tif stack
-        elements = numel(info); %determine the number of frames 
-        A = imread(curr_file);
-        y_pixels = size(A,1);
-        roi = round((y_pixels)*(0.35)); %setting up the lower and upper bounds for the roi. Selects the top and bottom 35% of image
-        roil = y_pixels - roi;
-        roi_1 = zeros(elements,1);
-        roi_2 = zeros(elements,1);
-        for i = 1:elements
-            A = imread(curr_file,i,'Info',info); %load greyscale values into a matrix
-            top = A(1:roi,:);
-            roi_1(i) = sum(sum(top,1),2); %aggregate greyscale values into one lump sum for both roi
-            bottom = A(roil:y_pixels,:);
-            roi_2(i) = sum(sum(bottom,1),2);
-        end
-        bkg_1 = mean(roi_1(1:300)); %average first 300 frames to find baseline greyscale value
-        bkg_2 = mean(roi_2(1:300));
-        roi_1 = roi_1 - bkg_1; %subtract background from roi data
-        roi_2 = roi_2 - bkg_2;
-        a = max(roi_1);  %determine max peak for each roi for comparison in order to determine which LED turned on
-        b = max(roi_2);
-        if(a > b)
-            primary = roi_1;
-            primary_peak = a;
-        elseif(b > a)
-            primary = roi_2;
-            primary_peak = b;
-        end
-        
-        detection_level = (primary_peak/2);     % find the first frame where the sum is greater than half of the max greyscale value
-        t0 = find(primary > detection_level, 1);
-        data = [curr_file(1:end-3) 'mat'];  %load corresponding mat file
-        table = load(data);
-        [~,c] = size(table);  %determine number of columns
-        
-        if t0 < 500
-            toadd = 500 - t0;
-            B = NaN(toadd,c);
-            table = [B; table];
-            save(data,table);
-            
-        elseif t0 > 500
-            tosubtract = t0 - 500;
-            table = table(tosubtract:end, :);
-            save(data, table);
-        else
-            
-        end
-        
+        Tiff = imread(curr_file);
         
     end
     
 [fold,fil] = detector(start_directory);
 
 if fil > 0
-    images = dir('*.tif');
-        for t = 1:fil
-            tif_name = images(t);
-            jit(tif_name);
-        end
-        
+    for n = 1:size(fil,1)
+        jit(fil(n));
+    end
 elseif fil == 0
     fprintf('No tif source files in the start directory\n');
 end
@@ -88,12 +37,6 @@ if fold > 0
         fprintf('Checking %s for tif files\n', currpath);
         if fil > 0
             % Insert code to correct jitter here for subdirectories
-            cd(currpath);
-            images = dir('*.tif');
-            for t = 1:fil
-                tif_name = images(t);
-                jit(tif_name);
-            end
         end
     end
     finish = datestr(now);
