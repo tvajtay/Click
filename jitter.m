@@ -38,7 +38,7 @@ initial_directory = cd;
         a = max(roi_1);  %determine max peak for each roi for comparison in order to determine which LED turned on
         b = max(roi_2);
         
-        if(a > b)
+        if(a > b)           % To determine which of the two LEDs activated
             primary = roi_1;
             primary_peak = a;
         elseif(b > a)
@@ -53,17 +53,17 @@ initial_directory = cd;
         table = struct2array(table);
         [~,c] = size(table);  %determine number of columns
         
-        if t0 < 500
+        if t0 < 500          %if frame with led start is before frame 500
             toadd = 500 - t0;
             B = NaN(toadd,c);
             table = [B; table];
-            save(['jit_' data],'table');
+            save(['jit_' data],'table');        %prefix added to retain original data file
             
-        elseif t0 > 500
+        elseif t0 > 500     %if frame with led start is after frame 500
             tosubtract = t0 - 500;
             table = table(tosubtract:end, :);
             save(['jit_' data] , 'table');
-        else
+        else %if LED on is precisely at 500 frame, it is ignored
             
         end
         
