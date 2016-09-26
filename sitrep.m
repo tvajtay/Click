@@ -18,6 +18,11 @@ function [fold_detect,file_detect] = detector(path)   %Detector script to search
     file_detect = size(files, 1);
 end
 
+function sliderCallback(hObject, evt)
+            fprintf('Slider value is: %d\n', get(hObject, 'Value') );
+end
+    
+
 function [] = sit( file_dir )
     cd(file_dir)
     file_array = dir('*.mat');
@@ -29,7 +34,7 @@ function [] = sit( file_dir )
             table = load(file_array(x).name);
             table = struct2array(table);
             [~,whisker] = size(table);
-            subplot(12,8,x);
+            subplot_tight(12,8,x);
             for t = 1:whisker
                 plot(table(:,t), c{t});
                 hold on
@@ -38,7 +43,12 @@ function [] = sit( file_dir )
             title(H);
             
         end
-        figname = sprintf('%s_Duration_part1',heading.name(1:end-4));    
+        figname = sprintf('%s_Duration_part1',heading.name(1:end-4));
+        set(gcf,'Units','normalized');
+        set(gcf,'Position',[0 0 1 1]);
+        
+        uicontrol('Style', 'slider', 'Callback', @sliderCallback);
+        
         saveas(gcf, figname, 'fig');
         
         close all  %reset figure
@@ -47,7 +57,7 @@ function [] = sit( file_dir )
             table = load(file_array(x).name);
             table = struct2array(table);
             [~,whisker] = size(table);
-            subplot(6,7,j);
+            subplot_tight(6,7,j);
             for t = 1:whisker
                 plot(table(:,t), c{t});
                 hold on
@@ -69,7 +79,7 @@ function [] = sit( file_dir )
             table = load(file_array(x).name);
             table = struct2array(table);
             [~,whisker] = size(table);
-            subplot(3,15,j);
+            subplot_tight(3,15,j);
                 for t = 1:whisker
                     plot(table(:,t), c{t});
                     hold on
@@ -89,7 +99,7 @@ function [] = sit( file_dir )
             table = load(file_array(x).name);
             table = struct2array(table);
             [~,whisker] = size(table);
-            subplot(3,8,j);
+            subplot_tight(3,8,j);
                 for t = 1:whisker
                     plot(table(:,t), c{t});
                     hold on
@@ -111,7 +121,7 @@ function [] = sit( file_dir )
             table = load(file_array(x).name);
             table = struct2array(table);
             [~,whisker] = size(table);
-            subplot(8,6,j);
+            subplot_tight(8,6,j);
                 for t = 1:whisker
                     plot(table(:,t), c{t});
                     hold on
