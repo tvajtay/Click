@@ -1,7 +1,7 @@
 # Click v2.5
 Simple MATLAB script to automate all components of Clack Whisker Tracker
 
-Uses version 1.1.0d of Whisk (https://openwiki.janelia.org/wiki/display/MyersLab/Whisker+Tracking+Downloads), Python 2.7, and  Matlab 2013a *(The "LoadMeasurements" matlab function included with Whisk only seems to work in matlab 2013a and perhaps older.)
+Uses version 1.1.0d of Whisk (https://openwiki.janelia.org/wiki/display/MyersLab/Whisker+Tracking+Downloads), Python 2.7, and a 64-bit distribution of MATLAB.
 
 WhiskerTracking should be installed on the Desktop for convenience but not neccessary and movies to be analyzed can exist in any directory as long as the path can be added to the analysis computer.
 
