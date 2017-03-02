@@ -1,4 +1,4 @@
-function [] = tiffcrop( start_side, start_dir, coordinates )
+function [] = tiffcrop( start_dir, coordinates )
 %TIFFCROP Crops all tiff files 
 %   Detailed explanation goes here
 tstart = tic;
@@ -18,15 +18,20 @@ function [fold_detect,file_detect] = detector(path)
         file_detect = size(files, 1);
 end
 
-function [] = cropp(side, direc, coord, filenum)
+function [] = cropp(direc, coord, filenum)
         fprintf('Tif files located, beginning to correct.\n');
         cd(direc);
         images = dir('*.tif');
-        for t = 1:filnum
+        for t = 1:filenum
             curr_file = images(t).name;
             fprintf('Loading image data for %s.\n',curr_file);
             info = imfinfo(curr_file); %creates structure for every frame in tif stack
             elements = numel(info); %determine the number of frames 
+            for i = 1:elements
+                A = imread(curr_file, i, 'Info', info); %load greyscale values into a matrix
+                A(:, 1:coord) = [];
+                imwrite(A, curr_file, 'writemode', 'append');
+            end
             
         end
 
@@ -39,7 +44,7 @@ coord_num = 0;
 if fil > 0
     coord_num = coord_num + 1;
     coordinate = coordinates(coord_num);
-    cropp(start_side, start_dir, coordinate, fil);
+    cropp(start_dir, coordinate, fil);
 elseif fil == 0
     fprintf('No tif files in the start directory\n');
 end
@@ -55,9 +60,22 @@ if fold > 0
         if fil > 0
             coord_num = coord_num + 1;
             coordinate = coordinates(coord_num);
-            cropp(start_side, currpath, coordinate, fil);
+            cropp(currpath, coordinate, fil);
         end
     end
+    
+    finish = datestr(now);
+    fprintf('Tiffcrop completed at %s\n', finish);
+    cd(working_directory);
+    telapsed = toc(tstart);
+    fprintf('Tiffcrop ran for %.2f seconds\n', telapsed);
+    
+elseif fold == 0
+    finish = datestr(now);
+    cd(working_directory);
+    fprintf('Tiffcrop completed at %s\n', finish);
+    telapsed = toc(tstart);
+    fprintf('Tiffcrop ran for %.2f seconds\n', telapsed);
 end
         
 
