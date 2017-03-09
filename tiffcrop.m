@@ -60,6 +60,7 @@ if fold > 0
         if fil > 0
             coord_num = coord_num + 1;
             coordinate = coordinates(coord_num);
+            fprintf('Cropping photos in %s',currpath);
             cropp(currpath, coordinate, fil);
         end
     end
