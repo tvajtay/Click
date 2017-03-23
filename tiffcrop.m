@@ -27,14 +27,18 @@ function [] = cropp(direc, coord, filenum)
             fprintf('Loading image data for %s.\n',curr_file);
             info = imfinfo(curr_file); %creates structure for every frame in tif stack
             elements = numel(info); %determine the number of frames 
+            new_file = sprintf('crop-%s',curr_file);
+            A = zeros(320,256,elements);
             for i = 1:elements
-                A = imread(curr_file, i, 'Info', info); %load greyscale values into a matrix
-                A(:, 1:coord) = [];
-                imwrite(A, curr_file, 'writemode', 'append');
+                A(:,:,i) = imread(curr_file, i, 'Info', info); %load greyscale values into a matrix
+                fprintf('Current element: %d\n', i); 
             end
-            
-        end
-
+            A(:, 1:coord,:) = [];
+            for j = 1:elements
+            imwrite(A(:,:,j), new_file,'tif', 'WriteMode','append');
+            fprintf('Current element: %d\n', j);
+            end
+        end 
 end
 
 
