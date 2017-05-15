@@ -5,6 +5,7 @@ function [ ] = click(face_hint, start_directory, whiskers)
 %usage: click('left', 'C:\Users\USER\Desktop\YOUR_START_DIRECTORY', [n n]);
 %Tom Vajtay 07/2016 Rutgers University
 %  
+
 tstart = tic;
 working_directory = cd;
 addpath(cd)
@@ -13,19 +14,17 @@ addpath(start_directory);
 
     function clacker(face_hint, path, whisker)
         cd(working_directory);
-        tracer = sprintf('C:/Python27/python python/batch.py "%s" -e trace -f *.tif', path);
-        dos(tracer);
+        tracer = sprintf('C:/Python27/python python/batch.py "%s" -e trace -f *.tif', path); %Formats command for DOS entry
+        dos(tracer); %DOS command of previous string
 
         cd(path)
-        files = dir('*.whiskers');
+        files = dir('*.whiskers'); %makes list of all created whiskers files
         cd(working_directory); 
         M = size(files);
         M = M(1);
         for n = 1:M
             file = files(n);
-            measures = file.name;
-            measures = measures(1:end-8);
-            measures = [measures 'measurements'];
+            measures = [file.name(1:end-8) 'measurements'];
             fprintf(1,'Measuring %s\n',file.name);
             stringm = sprintf('measure --face %s "%s\\%s" "%s\\%s" ', face_hint, path, file.name, path, measures);
             dos(stringm);
@@ -76,8 +75,7 @@ addpath(start_directory);
                 table = LoadMeasurements(B);
                 cd(path)
                 fprintf('Loading Measurements file for %s \n',file.name);
-                name = file.name(1:end-12);
-                name = [name 'mat'];
+                name = [file.name(1:end-12) 'mat'];
                 save(name, 'table');
                 fprintf('Saved data matrix for %s\n', file.name);
                 cd(working_directory); 
@@ -209,4 +207,3 @@ elseif fold == 0
     fprintf('Click ran for %.2f seconds\n', telapsed);
 end
 end
-
