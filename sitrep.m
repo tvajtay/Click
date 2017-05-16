@@ -24,7 +24,7 @@ end
 function [] = sit( file_dir )
     cd(file_dir)
     file_array = dir('*.mat');
-    heading = dir('*.txt'); %Uses the putty file name to label the summary figures
+    heading = cd;
     Y = length(dir('*.tif'));
     if Y == 138 || Y == 207 || Y == 186     %The specific # of mat files is important to make sure the subplots are organized correctly
         c = {'r' 'c' 'g' 'm' 'y' 'k'};
@@ -41,7 +41,7 @@ function [] = sit( file_dir )
             title(H);
             
         end
-        figname = sprintf('%s_Duration_part1',heading.name(1:end-4));
+        figname = sprintf('%s_Duration_part1',heading(end-2:end));
         set(gcf,'Units','normalized');
         set(gcf,'Position',[0 0 1 1]);
         
@@ -66,7 +66,7 @@ function [] = sit( file_dir )
             
         end
         
-        figname = sprintf('%s_Duration_part2',heading.name(1:end-4));    
+        figname = sprintf('%s_Duration_part2',heading(end-2:end));    
         saveas(gcf, figname, 'png');
         
         close all  %reset figure
@@ -87,7 +87,7 @@ function [] = sit( file_dir )
             j = j + 1;
             end
         
-            figname = sprintf('%s_Intensity_part1',heading.name(1:end-4));    
+            figname = sprintf('%s_Intensity_part1',heading(end-2:end));    
             saveas(gcf, figname, 'png');
 
             close all  %reset figure
@@ -108,7 +108,7 @@ function [] = sit( file_dir )
             
             end
         
-            figname = sprintf('%s_Intensity_part2',heading.name(1:end-4));
+            figname = sprintf('%s_Intensity_part2',heading(end-2:end));
             saveas(gcf, figname, 'png');
             close all  %reset figure
         end
@@ -130,7 +130,7 @@ function [] = sit( file_dir )
             
             end
         
-            figname = sprintf('%s_Frequency',heading.name(1:end-4));    
+            figname = sprintf('%s_Frequency',heading(end-2:end));    
             saveas(gcf, figname, 'png');
 
             close all  %reset figure
