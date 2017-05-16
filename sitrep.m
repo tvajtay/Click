@@ -6,6 +6,8 @@ function [] = sitrep( B )
 %   unique *.mat file in order to determine accuracy of whisker tracker.
 
 working_directory = cd;
+addpath(working_directory);
+
 tstart = tic;
 function [fold_detect,file_detect] = detector(path)   %Detector script to search for mat file and folders and return counts for both
     cd(path)
@@ -17,24 +19,20 @@ function [fold_detect,file_detect] = detector(path)   %Detector script to search
     fold_detect = size(nameFolds, 1);
     file_detect = size(files, 1);
 end
-
-function sliderCallback(hObject, evt)
-            fprintf('Slider value is: %d\n', get(hObject, 'Value') );
-end
     
 
 function [] = sit( file_dir )
     cd(file_dir)
     file_array = dir('*.mat');
     heading = dir('*.txt'); %Uses the putty file name to label the summary figures
-    Y = length(file_array);
+    Y = length(dir('*.tif'));
     if Y == 138 || Y == 207 || Y == 186     %The specific # of mat files is important to make sure the subplots are organized correctly
         c = {'r' 'c' 'g' 'm' 'y' 'k'};
         for x = 1:96
             table = load(file_array(x).name);
             table = struct2array(table);
             [~,whisker] = size(table);
-            subplot_tight(12,8,x);
+            subplot_tight(8,12,x);
             for t = 1:whisker
                 plot(table(:,t), c{t});
                 hold on
@@ -49,7 +47,7 @@ function [] = sit( file_dir )
         
         uicontrol('Style', 'slider', 'Callback', @sliderCallback);
         
-        saveas(gcf, figname, 'fig');
+        saveas(gcf, figname, 'png');
         
         close all  %reset figure
         j=1;
@@ -57,7 +55,7 @@ function [] = sit( file_dir )
             table = load(file_array(x).name);
             table = struct2array(table);
             [~,whisker] = size(table);
-            subplot_tight(6,7,j);
+            subplot_tight(7,6,j);
             for t = 1:whisker
                 plot(table(:,t), c{t});
                 hold on
@@ -69,7 +67,7 @@ function [] = sit( file_dir )
         end
         
         figname = sprintf('%s_Duration_part2',heading.name(1:end-4));    
-        saveas(gcf, figname, 'fig');
+        saveas(gcf, figname, 'png');
         
         close all  %reset figure
         
@@ -90,7 +88,7 @@ function [] = sit( file_dir )
             end
         
             figname = sprintf('%s_Intensity_part1',heading.name(1:end-4));    
-            saveas(gcf, figname, 'fig');
+            saveas(gcf, figname, 'png');
 
             close all  %reset figure
             
@@ -111,7 +109,7 @@ function [] = sit( file_dir )
             end
         
             figname = sprintf('%s_Intensity_part2',heading.name(1:end-4));
-            saveas(gcf, figname, 'fig');
+            saveas(gcf, figname, 'png');
             close all  %reset figure
         end
         
@@ -133,7 +131,7 @@ function [] = sit( file_dir )
             end
         
             figname = sprintf('%s_Frequency',heading.name(1:end-4));    
-            saveas(gcf, figname, 'fig');
+            saveas(gcf, figname, 'png');
 
             close all  %reset figure
             
@@ -141,7 +139,7 @@ function [] = sit( file_dir )
         
             
     else
-        fpintf('Number of mat files does not correspond with a known experiment.\n');
+        fprintf('Number of mat files does not correspond with a known experiment.\n');
     end
     
     
@@ -171,7 +169,7 @@ if fold > 0
         fprintf('Checking %s for mat files\n', currpath);
         if fil > 0
           fprintf('Mat files detected in %s, initiating report\n', currpath);  
-          sit(curr_path);
+          sit(currpath);
         end
     end
     finish = datestr(now);
