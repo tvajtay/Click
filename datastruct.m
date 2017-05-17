@@ -1,4 +1,4 @@
-function [ D ] = datastruct( path )
+function [ D ] = datastruct( start_directory, whiskers )
 %DATASTRUCT Function to organize optogenetic whisker data
 %   The testing paradigm of the summer 2016 optogenetic testing and beyond
 % uses a unique sequence of durations. This function aims to organize all
@@ -18,7 +18,19 @@ function [fold_detect,file_detect] = detector(path)
         nameFolds(ismember(nameFolds,{'.','..'})) = [];
         fold_detect = size(nameFolds, 1);
         file_detect = size(files, 1);
+end
+
+    function [] = ds()
+        
     end
+x = NaN(1500,17,6);
+d = [18 19 20 21 25 26 27 28];
+A = struct('Date',{},'Mice',struct('Name', {},'P',[], 'R', []))
+
+for i = 1:8
+    A(i).Date = sprintf('07/%d/16',d(i));
+end
+
 whisker_order = 0;
 if fil > 0
     whisker_order = whisker_order + 1;
