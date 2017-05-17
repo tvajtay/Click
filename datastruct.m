@@ -20,26 +20,24 @@ function [fold_detect,file_detect] = detector(path)
         file_detect = size(files, 1);
 end
 
-    function [] = ds()
+    function [] = ds(path, whisk)
         
     end
 x = NaN(1500,17,6);
 d = [18 19 20 21 25 26 27 28];
-A = struct('Date',{},'Mice',struct('Name', {},'P',[], 'R', []))
+m = {'F0n', 'F1n', 'M0n', 'M1n', 'M2n'};
+A = struct('Date',{},'Mice',struct('Name', {},'P',[], 'R', []));
 
 for i = 1:8
     A(i).Date = sprintf('07/%d/16',d(i));
+    for j = 1:5
+       A(i).Mice(j).name = m(j);
+       A(i).Mice(j).P = x;
+       A(i).Mice(j).R = x;
+    end
 end
 
 whisker_order = 0;
-if fil > 0
-    whisker_order = whisker_order + 1;
-    whisknum = whiskers(whisker_order);
-    clacker(face_hint, start_directory, whisknum);
-elseif fil == 0
-    fprintf('No tif files in the start directory\n');
-end
-
 if fold > 0
     target = [start_directory '\**\*.'];
     fprintf('Scanning all subdirectories from starting directory\n');
@@ -57,12 +55,6 @@ if fold > 0
     finish = datestr(now);
     fprintf('Click completed at %s\n', finish);
     cd(working_directory);
-    telapsed = toc(tstart);
-    fprintf('Click ran for %.2f seconds\n', telapsed);
-elseif fold == 0
-    finish = datestr(now);
-    cd(working_directory);
-    fprintf('Click completed at %s\n', finish);
     telapsed = toc(tstart);
     fprintf('Click ran for %.2f seconds\n', telapsed);
 end
