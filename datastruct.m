@@ -6,6 +6,7 @@ function [ D ] = datastruct( start_directory, whiskers )
 % input arguement is only a string of the path to the main parent directory
 % of the experiment.
 
+tstart = tic;
 working_directory = cd;
 addpath(cd)
 
@@ -26,7 +27,7 @@ end
         sw = 0;
         colnum = 1;
         depnum = 1;
-        fprintf('Starting duration part 1');
+        fprintf('Starting duration part 1\n');
         for t = 1:96
             switch sw
                 case 0 %Protraction data input
@@ -49,7 +50,7 @@ end
                     end
             end      
         end
-        fprintf('Starting duration part 2');
+        fprintf('Starting duration part 2\n');
         for t = 97:138
             switch sw
                 case 0 %Protraction data input
@@ -102,8 +103,8 @@ for k = 1:length(D)
     fprintf('Checking %s for tif files\n', currpath);
     Af = 1;
     mf = 1;
-    if fil == 138
-        fprintf('Starting data input');
+    if fil >= 138
+        fprintf('Starting data input\n');
         whisker_order = whisker_order + 1;
         whisknum = whiskers(whisker_order);
         ds(currpath, whisknum, Af, mf);
@@ -114,11 +115,14 @@ for k = 1:length(D)
         end
     end
 end
-finish = datestr(now);
-fprintf('Click completed at %s\n', finish);
+
 cd(working_directory);
+save('nerveregendata.mat','A');
+
+finish = datestr(now);
+fprintf('Datastruct completed at %s\n', finish);
 telapsed = toc(tstart);
-fprintf('Click ran for %.2f seconds\n', telapsed);
+fprintf('Datastruct ran for %.2f seconds\n', telapsed);
 
 
 end
