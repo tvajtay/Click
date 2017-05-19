@@ -33,12 +33,16 @@ end
                 case 0 %Protraction data input
                     dt = load(movies(t).name);
                     dt = dt.data_array(:,whisk);
+                    nm = nanmean(dt(1:400,1),1);
+                    dt = dt - nm;
                     rownum = size(dt,1);
                     A(Aindex).Mice(mouseindex).P(1:rownum,colnum,depnum) = dt;
                     sw = 1;
                 case 1 %Retraction data input
                     dt = load(movies(t).name);
                     dt = dt.data_array(:,whisk);
+                     nm = nanmean(dt(1:400,1),1);
+                    dt = dt - nm;
                     rownum = size(dt,1);
                     A(Aindex).Mice(mouseindex).R(1:rownum,colnum,depnum) = dt;
                     depnum = depnum + 1;
@@ -56,12 +60,16 @@ end
                 case 0 %Protraction data input
                     dt = load(movies(t).name);
                     dt = dt.data_array(:,whisk);
+                     nm = nanmean(dt(1:400,1),1);
+                    dt = dt - nm;
                     rownum = size(dt,1);
                     A(Aindex).Mice(mouseindex).P(1:rownum,colnum,depnum) = dt;
                     sw = 1;
                 case 1 %Retraction data input
                     dt = load(movies(t).name);
                     dt = dt.data_array(:,whisk);
+                     nm = nanmean(dt(1:400,1),1);
+                    dt = dt - nm;
                     rownum = size(dt,1);
                     A(Aindex).Mice(mouseindex).R(1:rownum,colnum,depnum) = dt;
                     depnum = depnum + 1;
@@ -97,12 +105,12 @@ whisker_order = 0;
 target = [start_directory '\**\*.'];
 fprintf('Scanning all subdirectories from starting directory\n');
 D = rdir(target);             %// List of all sub-directories
+Af = 1;
+mf = 1;
 for k = 1:length(D)
     currpath = D(k).name;
     [~,fil] = detector(currpath);
     fprintf('Checking %s for tif files\n', currpath);
-    Af = 1;
-    mf = 1;
     if fil >= 138
         fprintf('Starting data input\n');
         whisker_order = whisker_order + 1;
