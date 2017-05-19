@@ -20,10 +20,64 @@ function [fold_detect,file_detect] = detector(path)
         file_detect = size(files, 1);
 end
 
-    function [] = ds(path, whisk)
+    function [] = ds(path, whisk, Aindex, mouseindex)
+        cd(path)
+        movies = dir('*.mat');
+        sw = 0;
+        colnum = 1;
+        depnum = 1;
+        fprintf('Starting duration part 1');
+        for t = 1:96
+            switch sw
+                case 0 %Protraction data input
+                    dt = load(movies(t).name);
+                    dt = dt.data_array(:,whisk);
+                    rownum = size(dt,1);
+                    A(Aindex).Mice(mouseindex).P(1:rownum,colnum,depnum) = dt;
+                    sw = 1;
+                case 1 %Retraction data input
+                    dt = load(movies(t).name);
+                    dt = dt.data_array(:,whisk);
+                    rownum = size(dt,1);
+                    A(Aindex).Mice(mouseindex).R(1:rownum,colnum,depnum) = dt;
+                    depnum = depnum + 1;
+                    sw = 0;
+                    
+                    if depnum == 7
+                       depnum = 1;
+                       colnum = colnum + 1;
+                    end
+            end      
+        end
+        fprintf('Starting duration part 2');
+        for t = 97:138
+            switch sw
+                case 0 %Protraction data input
+                    dt = load(movies(t).name);
+                    dt = dt.data_array(:,whisk);
+                    rownum = size(dt,1);
+                    A(Aindex).Mice(mouseindex).P(1:rownum,colnum,depnum) = dt;
+                    sw = 1;
+                case 1 %Retraction data input
+                    dt = load(movies(t).name);
+                    dt = dt.data_array(:,whisk);
+                    rownum = size(dt,1);
+                    A(Aindex).Mice(mouseindex).R(1:rownum,colnum,depnum) = dt;
+                    depnum = depnum + 1;
+                    sw = 0;
+                    
+                    if depnum == 4
+                       depnum = 1;
+                       colnum = colnum + 1;
+                    end
+            end      
+        end
         
+        A(Aindex).Mice(mouseindex).P(:,16,:) = nanmean( A(Aindex).Mice(mouseindex).P(:,1:15,:),2);
+        A(Aindex).Mice(mouseindex).R(:,16,:) = nanmean( A(Aindex).Mice(mouseindex).R(:,1:15,:),2);
     end
-x = NaN(1500,17,6);
+
+x = NaN(1500,16,6);
 d = [18 19 20 21 25 26 27 28];
 m = {'F0n', 'F1n', 'M0n', 'M1n', 'M2n'};
 A = struct('Date',{},'Mice',struct('Name', {},'P',[], 'R', []));
@@ -38,26 +92,33 @@ for i = 1:8
 end
 
 whisker_order = 0;
-if fold > 0
-    target = [start_directory '\**\*.'];
-    fprintf('Scanning all subdirectories from starting directory\n');
-    D = rdir(target);             %// List of all sub-directories
-    for k = 1:length(D)
-        currpath = D(k).name;
-        [~,fil] = detector(currpath);
-        fprintf('Checking %s for tif files\n', currpath);
-        if fil > 0
-            whisker_order = whisker_order + 1;
-            whisknum = whiskers(whisker_order);
-            clacker(face_hint, currpath, whisknum);
+
+target = [start_directory '\**\*.'];
+fprintf('Scanning all subdirectories from starting directory\n');
+D = rdir(target);             %// List of all sub-directories
+for k = 1:length(D)
+    currpath = D(k).name;
+    [~,fil] = detector(currpath);
+    fprintf('Checking %s for tif files\n', currpath);
+    Af = 1;
+    mf = 1;
+    if fil == 138
+        fprintf('Starting data input');
+        whisker_order = whisker_order + 1;
+        whisknum = whiskers(whisker_order);
+        ds(currpath, whisknum, Af, mf);
+        mf = mf + 1;
+        if mf > 5
+            mf = 1;
+            Af = Af + 1;
         end
     end
-    finish = datestr(now);
-    fprintf('Click completed at %s\n', finish);
-    cd(working_directory);
-    telapsed = toc(tstart);
-    fprintf('Click ran for %.2f seconds\n', telapsed);
 end
+finish = datestr(now);
+fprintf('Click completed at %s\n', finish);
+cd(working_directory);
+telapsed = toc(tstart);
+fprintf('Click ran for %.2f seconds\n', telapsed);
 
 
 end
