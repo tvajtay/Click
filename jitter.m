@@ -83,7 +83,17 @@ initial_directory = cd;
     
     function [] = pjit(cur_file)
         B = load(cur_file);
-        
+        numof = isnan(B(1:400,:));
+        if size(find(numof(:,1)),1) > 0
+            Orig = load(cur_file(4:end));
+            coll = size(Orig,2);
+            na = nan(size(find(numof(:,1)),1),coll);
+            Orig = [na; Orig];
+            save(['jit' curfile], 'Orig'); 
+        else
+            Orig = load(cur_file(4:end));
+            coll = size(Orig,2);
+        end
     end
 
 
