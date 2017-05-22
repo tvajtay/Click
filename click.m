@@ -84,8 +84,8 @@ addpath(start_directory);
 
         cd(path)
         directory = dir('*.mat');
-        F = size(directory);
-        F = F(1);
+        F = S;
+       
 
         for i = 1:F
             X = directory(i).name;

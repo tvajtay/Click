@@ -14,6 +14,17 @@ initial_directory = cd;
             file_detect = size(files, 1);
     end
 
+     function [fold_detect,file_detect] = jdetector(pathy)
+            cd(pathy)
+            b = dir();
+            files = dir('jit*');
+            isub = [b(:).isdir];
+            nameFolds = {b(isub).name}';
+            nameFolds(ismember(nameFolds,{'.','..'})) = [];
+            fold_detect = size(nameFolds, 1);
+            file_detect = size(files, 1);
+    end
+
     function [] = jit(curr_file)     %The actual function
         fprintf('Loading image data for %s.\n',curr_file);
         info = imfinfo(curr_file); %creates structure for every frame in tif stack
@@ -70,9 +81,15 @@ initial_directory = cd;
         
     end
     
-[fold,fil] = detector(start_directory);
+    function [] = pjit(cur_file)
+        B = load(cur_file);
+        
+    end
 
-if fil > 0
+
+[fold,fil] = detector(start_directory);
+[~,jfil] = jdectector(start_directory);
+if fil > 0 && jfil == 0
     images = dir('*.tif');
     fprintf('Files in start directory,starting to correct.\n');
         for t = 1:fil
@@ -80,8 +97,13 @@ if fil > 0
             jit(tif_name);
         end
         
-elseif fil == 0
-    fprintf('No tif source files in the start directory\n');
+elseif jfil > 0
+    jfiles = dir('jit*');
+    fprintf('Files in start directory,starting to correct.\n');
+    for h = 1:jfil
+        jit_name = jfiles(h).name;
+        pjit(jit_name);
+    end
 end
 
 if fold > 0
@@ -91,8 +113,9 @@ if fold > 0
     for k = 1:length(D)
         currpath = D(k).name;
         [~,fil] = detector(currpath);
+        [~,jfil] = jdetector(currpath);
         fprintf('Checking %s for tif files\n', currpath);
-        if fil > 0
+        if fil > 0 && jfil == 0
             % Insert code to correct jitter here for subdirectories
             fprintf('Tif files located, beginning to correct.\n');
             cd(currpath);
@@ -100,6 +123,12 @@ if fold > 0
             for t = 1:fil
                 tif_name = images(t).name;
                 jit(tif_name);
+            end
+        elseif jfil > 0
+            jfiles = dir('jit*');
+            for h = 1:jfil
+                jit_name = jfiles(h).name;
+                pjit(jit_name);
             end
         end
     end
