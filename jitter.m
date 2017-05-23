@@ -83,22 +83,30 @@ initial_directory = cd;
     
     function [] = pjit(cur_file)
         B = load(cur_file);
+        B = struct2cell(B);
+        B = B{1,1};
         numof = isnan(B(1:400,:));
-        if size(find(numof(:,1)),1) > 0
-            Orig = load(cur_file(4:end));
+        if size(find(numof(:,1)),1) > 0   %If we find Nans in the first 400 rows of the previous jit file we know we must add that many to the new mat data
+            Orig = load(cur_file(5:end));
+            Orig = struct2cell(Orig);
+            Orig = Orig{1,1};
             coll = size(Orig,2);
             na = nan(size(find(numof(:,1)),1),coll);
             Orig = [na; Orig];
-            save(['jit' curfile], 'Orig'); 
-        else
-            Orig = load(cur_file(4:end));
-            coll = size(Orig,2);
+            save(cur_file, 'Orig'); 
+        else                                 %If no Nans found in first 400 we have to cut away points, we compare non zero values to determine amount to cut
+          % After reviewing data I could not find any data where this was
+          % the scenario. I will just put an output here in case, but
+          % otherwise ignore this scenario.
+          fprintf('%s is a file that needs subtraction', cur_file);
+            
         end
     end
 
 
 [fold,fil] = detector(start_directory);
-[~,jfil] = jdectector(start_directory);
+[~,jfil] = jdetector(start_directory);
+
 if fil > 0 && jfil == 0
     images = dir('*.tif');
     fprintf('Files in start directory,starting to correct.\n');
@@ -119,12 +127,13 @@ end
 if fold > 0
     target = [start_directory '\**\*.'];
     fprintf('Scanning all subdirectories from starting directory\n');
+    cd(initial_directory)
     D = rdir(target);             %// List of all sub-directories
     for k = 1:length(D)
         currpath = D(k).name;
         [~,fil] = detector(currpath);
         [~,jfil] = jdetector(currpath);
-        fprintf('Checking %s for tif files\n', currpath);
+        fprintf('Checking %s for tif files and Jit files\n', currpath);
         if fil > 0 && jfil == 0
             % Insert code to correct jitter here for subdirectories
             fprintf('Tif files located, beginning to correct.\n');
@@ -136,6 +145,7 @@ if fold > 0
             end
         elseif jfil > 0
             jfiles = dir('jit*');
+            fprintf('jit files found, modifying');
             for h = 1:jfil
                 jit_name = jfiles(h).name;
                 pjit(jit_name);
@@ -144,12 +154,12 @@ if fold > 0
     end
     finish = datestr(now);
     fprintf('Jitter completed at %s\n', finish);
-    cd(working_directory);
+    cd(initial_directory);
     telapsed = toc(tstart);
     fprintf('Jitter ran for %.2f seconds\n', telapsed);
 elseif fold == 0
     finish = datestr(now);
-    cd(working_directory);
+    cd(initial_directory);
     fprintf('Jitter completed at %s\n', finish);
     telapsed = toc(tstart);
     fprintf('Jitter ran for %.2f seconds\n', telapsed);

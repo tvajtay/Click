@@ -23,7 +23,7 @@ end
 
     function [] = ds(path, whisk, Aindex, mouseindex)
         cd(path)
-        movies = dir('*.mat');
+        movies = dir('jit*.mat');
         sw = 0;
         colnum = 1;
         depnum = 1;
@@ -32,7 +32,7 @@ end
             switch sw
                 case 0 %Protraction data input
                     dt = load(movies(t).name);
-                    dt = dt.data_array(:,whisk);
+                    dt = dt.Orig(:,whisk);
                     nm = nanmean(dt(1:400,1),1);
                     dt = dt - nm;
                     rownum = size(dt,1);
@@ -40,8 +40,8 @@ end
                     sw = 1;
                 case 1 %Retraction data input
                     dt = load(movies(t).name);
-                    dt = dt.data_array(:,whisk);
-                     nm = nanmean(dt(1:400,1),1);
+                    dt = dt.Orig(:,whisk);
+                    nm = nanmean(dt(1:400,1),1);
                     dt = dt - nm;
                     rownum = size(dt,1);
                     A(Aindex).Mice(mouseindex).R(1:rownum,colnum,depnum) = dt;
@@ -54,21 +54,22 @@ end
                     end
             end      
         end
+        
+        %{
         fprintf('Starting duration part 2\n');
         for t = 97:138
             switch sw
                 case 0 %Protraction data input
                     dt = load(movies(t).name);
-                    dt = dt.data_array(:,whisk);
-                     nm = nanmean(dt(1:400,1),1);
+                    dt = dt.Orig;
+                    nm = nanmean(dt(1:400,1),1);
                     dt = dt - nm;
                     rownum = size(dt,1);
                     A(Aindex).Mice(mouseindex).P(1:rownum,colnum,depnum) = dt;
                     sw = 1;
                 case 1 %Retraction data input
                     dt = load(movies(t).name);
-                    dt = dt.data_array(:,whisk);
-                     nm = nanmean(dt(1:400,1),1);
+                    nm = nanmean(dt(1:400,1),1);
                     dt = dt - nm;
                     rownum = size(dt,1);
                     A(Aindex).Mice(mouseindex).R(1:rownum,colnum,depnum) = dt;
@@ -79,14 +80,14 @@ end
                        depnum = 1;
                        colnum = colnum + 1;
                     end
-            end      
+            end  
         end
-        
-        A(Aindex).Mice(mouseindex).P(:,16,:) = nanmean( A(Aindex).Mice(mouseindex).P(:,1:15,:),2);
-        A(Aindex).Mice(mouseindex).R(:,16,:) = nanmean( A(Aindex).Mice(mouseindex).R(:,1:15,:),2);
+         %}
+        A(Aindex).Mice(mouseindex).P(:,9,:) = nanmean( A(Aindex).Mice(mouseindex).P(:,1:8,:),2);
+        A(Aindex).Mice(mouseindex).R(:,9,:) = nanmean( A(Aindex).Mice(mouseindex).R(:,1:8,:),2);
     end
 
-x = NaN(1500,16,6);
+x = NaN(1550,9,6);
 d = [18 19 20 21 25 26 27 28];
 m = {'F0n', 'F1n', 'M0n', 'M1n', 'M2n'};
 A = struct('Date',{},'Mice',struct('Name', {},'P',[], 'R', []));
@@ -107,6 +108,7 @@ fprintf('Scanning all subdirectories from starting directory\n');
 D = rdir(target);             %// List of all sub-directories
 Af = 1;
 mf = 1;
+
 for k = 1:length(D)
     currpath = D(k).name;
     [~,fil] = detector(currpath);
