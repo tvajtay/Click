@@ -59,12 +59,12 @@ initial_directory = cd;
         
         detection_level = (primary_peak/2);     % find the first frame where the sum is greater than half of the max greyscale value
         t0 = find(primary > detection_level, 1);
-        data = [curr_file(1:end-9) 'mat'];  %load corresponding mat file
+        data = [curr_file(1:17) '.mat'];  %load corresponding mat file
         table = load(data);
         table = struct2array(table);
         [~,c] = size(table);  %determine number of columns
         
-        if t0 < 500          %if frame with led start is before frame 500
+        if t0 < 500 && 500 - t0 < 150          %if frame with led start is before frame 500
             toadd = 500 - t0;
             B = NaN(toadd,c);
             table = [B; table];
@@ -75,7 +75,7 @@ initial_directory = cd;
             table = table(tosubtract:end, :);
             save(['jit_' data] , 'table');
         else %if LED on is precisely at 500 frame, it is ignored
-            
+            save(['jit_' data] , 'table');
         end
         
         
@@ -98,7 +98,7 @@ initial_directory = cd;
           % After reviewing data I could not find any data where this was
           % the scenario. I will just put an output here in case, but
           % otherwise ignore this scenario.
-          fprintf('%s is a file that needs subtraction', cur_file);
+          fprintf('%s is a file that needs subtraction\n', cur_file);
             
         end
     end
@@ -145,7 +145,7 @@ if fold > 0
             end
         elseif jfil > 0
             jfiles = dir('jit*');
-            fprintf('jit files found, modifying');
+            fprintf('Previous Jit files found, modifying\n');
             for h = 1:jfil
                 jit_name = jfiles(h).name;
                 pjit(jit_name);
