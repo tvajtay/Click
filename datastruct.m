@@ -32,17 +32,21 @@ end
             switch sw
                 case 0 %Protraction data input
                     dt = load(movies(t).name);
-                    dt = dt.Orig(:,whisk);
+                    dt = struct2cell(dt);
+                    dt = dt{1,1};
                     nm = nanmean(dt(1:400,1),1);
                     dt = dt - nm;
+                    dt = dt(:,whisk);
                     rownum = size(dt,1);
                     A(Aindex).Mice(mouseindex).P(1:rownum,colnum,depnum) = dt;
                     sw = 1;
                 case 1 %Retraction data input
                     dt = load(movies(t).name);
-                    dt = dt.Orig(:,whisk);
+                    dt = struct2cell(dt);
+                    dt = dt{1,1};
                     nm = nanmean(dt(1:400,1),1);
                     dt = dt - nm;
+                    dt = dt(:,whisk);
                     rownum = size(dt,1);
                     A(Aindex).Mice(mouseindex).R(1:rownum,colnum,depnum) = dt;
                     depnum = depnum + 1;
