@@ -13,6 +13,7 @@ addpath matlab
 addpath(start_directory);
 
     function clacker(face_hint, path, whisker)
+       %rats
         cd(working_directory);
         tracer = sprintf('C:/Python27/python python/batch.py "%s" -e trace -f *.tif', path); %Formats command for DOS entry
         dos(tracer); %DOS command of previous string
