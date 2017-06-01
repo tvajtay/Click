@@ -13,7 +13,6 @@ addpath matlab
 addpath(start_directory);
 
     function clacker(face_hint, path, whisker)
-       %rats
         cd(working_directory);
         tracer = sprintf('C:/Python27/python python/batch.py "%s" -e trace -f *.tif', path); %Formats command for DOS entry
         dos(tracer); %DOS command of previous string
@@ -40,7 +39,7 @@ addpath(start_directory);
         for n = 1:M
             file = files(n);
             fprintf(1,'Classifying %s\n',file.name);
-            stringc = sprintf('classify "%s\\%s" "%s\\%s" %s --px2mm 0.04 -n %1.0f ', path, file.name, path, file.name, face_hint, whisker);
+            stringc = sprintf('classify "%s\\%s" "%s\\%s" %s --px2mm 0.08 -n %1.0f ', path, file.name, path, file.name, face_hint, whisker);
             dos(stringc);
         end
         fprintf('Classification complete\n')
