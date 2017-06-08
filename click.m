@@ -65,96 +65,67 @@ addpath(start_directory);
 
         cd(path)
         measurements_files = dir('*.measurements');
-        cd(working_directory); 
 
-        d = size(measurements_files);
-        d = d(1);
+        d = size(measurements_files,1);
         for i = 1:d 
-                file = measurements_files(i);
-                B = [path '\' file.name];
-                table = LoadMeasurements(B);
-                cd(path)
-                fprintf('Loading Measurements file for %s \n',file.name);
-                name = [file.name(1:end-12) 'mat'];
-                save(name, 'table');
-                fprintf('Saved data matrix for %s\n', file.name);
-                cd(working_directory); 
-
-        end
-
-        cd(path)
-        directory = dir('*.mat');
-        F = S;
-       
-
-        for i = 1:F
-            X = directory(i).name;
-            load(X);
-            My_cell = struct2cell(table);
-            My_cell = My_cell';
-            My_cell = cellfun(@(x) single(x),My_cell);
-            rows = size(My_cell);
-            rows = rows(1);
-            frames = max(My_cell(:,1));
-            groups = [];
-            data_array = zeros(frames,whisker);
-            figs = (whisker - 1);
-            Ct = 0;
-            while Ct <= figs
-                groups = [groups Ct];
-                Ct = Ct + 1;
-            end
-
+            cd(working_directory);
+            file = measurements_files(i);
+            B = [path '\' file.name];
+            table = LoadMeasurements(B);
+            table = struct2cell(table);
+            table = table';
+            table = [table(:,1) table(:,3) table(:,8)];
+            table = cellfun(@(x) single(x), table);
+            rows = size(table,1);
+            frames = max(table(:,1));
+            whisks = (max(table(:,2)) + 1);
+            data_array = nan(frames,whisks);
+            figs = (whisks - 1);
+            groups = (0:figs);
             for j = 1:rows
-                if My_cell(j,3) < 0;
-                else
-                    L = find(My_cell(j,3) == groups);
-                    frame = (My_cell(j,1) + 1);
-                    data_array(frame, L) = My_cell(j,8);
+                if table(j,2) >= 0;
+                    L = table(j,2) == groups;
+                    frame = (table(j,1) + 1);
+                    data_array(frame, L) = table(j,3);
                 end
             end
+            name = file.name(1:end-12);
+            name = [name 'mat']; %#ok<AGROW>
+            cd(path)
+            save(name, 'data_array');
             
-            ER = size(find(data_array == 0), 1);
-            if ER > 0
-               data_array(data_array == 0) = NaN;
-               
-            end
-            save(X, 'data_array');
-
-            for t = 1:whisker
-                c = {'r' 'c' 'g' 'm' 'y' 'k'};
+            for t = 1:whisks
+                c = {'g' 'r' 'c' 'm' 'y' 'k'};
                 subplot(1,2,1);
                 plot(data_array(:,t), c{t});
                 hold on
             end
-            H = sprintf('%s\n Individual Whisker angle', directory(i).name);
+            H = sprintf('%s\n Individual Whisker angle', name(1:end-4));
             title(H);
             xlabel('Frame');
-            ylabel('Angle');
-            
-            
-            normal = mean(data_array(1:300,:));
+            ylabel('angle');
+
+            normal = nanmean(data_array(1:300,:));
             data_array = bsxfun(@minus, data_array, normal);
             average_angle = nanmean(data_array, 2);
             subplot(1,2,2);
             plot(average_angle, 'b');
-            H = sprintf('%s\n  Average Change in Whisker Angle', directory(i).name);
+            H = sprintf('%s\n  Average Whisker angle', name(1:end-4));
             title(H);
             xlabel('Frame');
-            ylabel('Angle');
-            header = directory(i).name;
-            header = header(1:end-4);
+            ylabel('angle');
+            header = name(1:end-4);
+            ER = sum(sum(isnan(data_array(350:600,:)),1),2);
             if ER > 0
                 figname = sprintf('%s-ERRORS', header);
-                fprintf('ERROR %s has a gap in data \n', directory(i).name);
-            else 
+                fprintf('ERROR %s.mat has a critical gap in data\n', header);
+            else
                 figname = sprintf('%s-Average', header);
-                fprintf('No errors in %s\n', directory(i).name);
+                fprintf('No errors in %s.mat\n', header);
             end
             saveas(gcf, figname, 'fig');
             close all
-
-        end  
+        end
     end
 
     function [fold_detect,file_detect] = detector(path)
