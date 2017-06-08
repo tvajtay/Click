@@ -115,7 +115,7 @@ addpath(start_directory);
             xlabel('Frame');
             ylabel('angle');
             header = name(1:end-4);
-            ER = sum(sum(isnan(data_array(350:600,:)),1),2);
+            ER = sum(sum(isnan(data_array(350:800,:)),1),2);
             if ER > 0
                 figname = sprintf('%s-ERRORS', header);
                 fprintf('ERROR %s.mat has a critical gap in data\n', header);
