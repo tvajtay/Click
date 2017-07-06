@@ -67,12 +67,12 @@ initial_directory = cd;
         if t0 < 500 && 500 - t0 < 150          %if frame with led start is before frame 500
             toadd = 500 - t0;
             B = NaN(toadd,c);
-            table = [B; table];
+            table = [B; table]; %#ok<NASGU>
             save(['jit_' data],'table');        %prefix added to retain original data file
             
         elseif t0 > 500     %if frame with led start is after frame 500
             tosubtract = t0 - 500;
-            table = table(tosubtract:end, :);
+            table = table(tosubtract:end, :); %#ok<NASGU>
             save(['jit_' data] , 'table');
         else %if LED on is precisely at 500 frame, it is ignored
             save(['jit_' data] , 'table');
@@ -92,7 +92,7 @@ initial_directory = cd;
             Orig = Orig{1,1};
             coll = size(Orig,2);
             na = nan(size(find(numof(:,1)),1),coll);
-            Orig = [na; Orig];
+            Orig = [na; Orig]; %#ok<NASGU>
             save(cur_file, 'Orig'); 
         else                                 %If no Nans found in first 400 we have to cut away points, we compare non zero values to determine amount to cut
           % After reviewing data I could not find any data where this was
@@ -128,7 +128,7 @@ if fold > 0
     target = [start_directory '\**\*.'];
     fprintf('Scanning all subdirectories from starting directory\n');
     cd(initial_directory)
-    D = rdir(target);             %// List of all sub-directories
+    D = rdir(target);             % List of all sub-directories
     for k = 1:length(D)
         currpath = D(k).name;
         [~,fil] = detector(currpath);
