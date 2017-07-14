@@ -1,4 +1,4 @@
-
+%For loops to go through final data structure to find Nan's
 for t = 1:8
     for j = 1:5
         for i = 1:6
