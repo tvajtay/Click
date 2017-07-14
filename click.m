@@ -15,32 +15,35 @@ addpath(start_directory);
     function clacker(face_hint, path, whisker)
         cd(working_directory);
         tracer = sprintf('C:/Python27/python python/batch.py "%s" -e trace -f *.tif', path); %Formats command for DOS entry
-        dos(tracer); %DOS command of previous string
+        dos(tracer); %DOS command of previous string, batch.py function (trace parallel proccessor)
 
         cd(path)
         files = dir('*.whiskers'); %makes list of all created whiskers files
-        cd(working_directory); 
-        M = size(files);
-        M = M(1);
-        for n = 1:M
+        cd(working_directory); %Returns to original working directory to have Whisk executables on path
+        M = size(files,1);
+        for n = 1:M %Sequential loads and measures all whiskers files in the current directory
             file = files(n);
-            measures = [file.name(1:end-8) 'measurements'];
+            measures = [file.name(1:end-8) 'measurements']; %Modifies filename for corresponding measurements file
             fprintf(1,'Measuring %s\n',file.name);
             stringm = sprintf('measure --face %s "%s\\%s" "%s\\%s" ', face_hint, path, file.name, path, measures);
-            dos(stringm);
+            dos(stringm); %DOS command to run measurements.exe
         end
         fprintf('Measurement complete\n')
 
         cd(path)
-        files = dir('*.measurements');
+        files = dir('*.measurements'); %Creates List of Measurements files and their path
         cd(working_directory); 
         M = size(files);
         M = M(1);
         for n = 1:M
+            try
             file = files(n);
             fprintf(1,'Classifying %s\n',file.name);
             stringc = sprintf('classify "%s\\%s" "%s\\%s" %s --px2mm 0.08 -n %1.0f ', path, file.name, path, file.name, face_hint, whisker);
-            dos(stringc);
+            dos(stringc); %DOS command for classify.exe, classify and re-classify do not create new files, but modify the existing measurements files
+            catch
+                continue;
+            end
         end
         fprintf('Classification complete\n')
 
@@ -48,8 +51,7 @@ addpath(start_directory);
         files1 = dir('*.measurements');
         cd(working_directory); 
 
-        S = size(files1);
-        S = S(1);
+        S = size(files1,1);
         for n = 1:S
             try
             file = files1(n);
@@ -71,22 +73,22 @@ addpath(start_directory);
             cd(working_directory);
             file = measurements_files(i);
             B = [path '\' file.name];
-            table = LoadMeasurements(B);
-            table = struct2cell(table);
-            table = table';
-            table = [table(:,1) table(:,3) table(:,8)];
-            table = cellfun(@(x) single(x), table);
+            table = LoadMeasurements(B); %Loads Measurements into a structure 
+            table = struct2cell(table); %Converting structure into cell array
+            table = table'; %Need to transpose as converting to cell array makes the data horizontal (?)
+            table = [table(:,1) table(:,3) table(:,8)]; %Selects the Frame ID, Whisker ID, and Angle from the measurements cell array.
+            table = cellfun(@(x) single(x), table); %Changes the data type to single so we can do math
             rows = size(table,1);
-            frames = max(table(:,1));
-            whisks = (max(table(:,2)) + 1);
-            data_array = nan(frames,whisks);
+            frames = max(table(:,1)); %Find the number of frames of current movie
+            whisks = (max(table(:,2)) + 1); %Since Whisk starts counting at 0 we add one for matlab
+            data_array = nan(frames,whisks); %Pre allocate matrix for data/speed
             figs = (whisks - 1);
-            groups = (0:figs);
-            for j = 1:rows
-                if table(j,2) >= 0;
-                    L = table(j,2) == groups;
-                    frame = (table(j,1) + 1);
-                    data_array(frame, L) = table(j,3);
+            groups = (0:figs); %Creates row vector of the possible Whisker ID's
+            for current_row = 1:rows %Cycle through all rows of measurements array
+                if table(current_row,2) >= 0; %If whisker candidate is labeled as a real whisker
+                    WID = table(current_row,2) == groups; %Find which whisker the row corresponds to
+                    frame = (table(current_row,1) + 1); %Find the frame the data represents, add 1 since Whisk starts at 0
+                    data_array(frame, WID) = table(current_row,3); %Populate matrix at Row == frame and Column == WID with angle data
                 end
             end
             name = file.name(1:end-12);
@@ -105,9 +107,9 @@ addpath(start_directory);
             xlabel('Frame');
             ylabel('angle');
 
-            normal = nanmean(data_array(1:300,:));
-            data_array = bsxfun(@minus, data_array, normal);
-            average_angle = nanmean(data_array, 2);
+            normal = nanmean(data_array(1:300,:)); %Finds average during "quiet" initial period
+            data_array = bsxfun(@minus, data_array, normal); %Subtracts baseline from all data to normalize data
+            average_angle = nanmean(data_array, 2); %Averages normalized whiskers to get average movement
             subplot(1,2,2);
             plot(average_angle, 'b');
             H = sprintf('%s\n  Average Whisker angle', name(1:end-4));
@@ -115,7 +117,7 @@ addpath(start_directory);
             xlabel('Frame');
             ylabel('angle');
             header = name(1:end-4);
-            ER = sum(sum(isnan(data_array(350:800,:)),1),2);
+            ER = sum(sum(isnan(data_array(350:800,:)),1),2); %Do gaps in data exist during stimuli
             if ER > 0
                 figname = sprintf('%s-ERRORS', header);
                 fprintf('ERROR %s.mat has a critical gap in data\n', header);
@@ -128,7 +130,7 @@ addpath(start_directory);
         end
     end
 
-    function [fold_detect,file_detect] = detector(path)
+    function [fold_detect,file_detect] = detector(path) % Function to report number of tiff files and folders in current directory
         cd(path)
         b = dir();
         files = dir('*.tif');
@@ -141,7 +143,7 @@ addpath(start_directory);
 
         
     
-[fold,fil] = detector(start_directory);
+[fold,fil] = detector(start_directory); %To check if Tiff files already present in starting directory and to analyze them
 whisker_order = 0;
 if fil > 0
     whisker_order = whisker_order + 1;
@@ -151,11 +153,13 @@ elseif fil == 0
     fprintf('No tif files in the start directory\n');
 end
 
-if fold > 0
-    target = [start_directory '\**\*.'];
+if fold > 0 %Sub-folders present
+    target = [start_directory '\**\*.']; %Append start directory path name with all sub folders for rdir
     fprintf('Scanning all subdirectories from starting directory\n');
-    D = rdir(target);             %// List of all sub-directories
-    for k = 1:length(D)
+    
+    D = rdir(target);             %List of all sub-directories
+    
+    for k = 1:length(D) %Goes through all folders found by rdir and checks if they contain tiff files
         currpath = D(k).name;
         [~,fil] = detector(currpath);
         fprintf('Checking %s for tif files\n', currpath);
@@ -165,11 +169,13 @@ if fold > 0
             clacker(face_hint, currpath, whisknum);
         end
     end
+    
     finish = datestr(now);
     fprintf('Click completed at %s\n', finish);
     cd(working_directory);
     telapsed = toc(tstart);
     fprintf('Click ran for %.2f seconds\n', telapsed);
+    
 elseif fold == 0
     finish = datestr(now);
     cd(working_directory);
