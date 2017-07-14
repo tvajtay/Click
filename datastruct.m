@@ -1,4 +1,4 @@
-function [ D ] = datastruct( start_directory, whiskers )
+function [] = datastruct( start_directory, whiskers )
 %DATASTRUCT Function to organize optogenetic whisker data
 %   The testing paradigm of the summer 2016 optogenetic testing and beyond
 % uses a unique sequence of durations. This function aims to organize all
