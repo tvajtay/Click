@@ -1,6 +1,6 @@
 function [] = datastruct2( start_directory, whiskers )
 %DATASTRUCT Function to organize optogenetic whisker data
-%   The testing paradigm of AB 2016 optogenetic testing
+%   The testing paradigm of AB 2017 optogenetic testing
 % uses a unique sequence of durations. This function aims to organize all
 % the individual data into a 3D struct with averages and SEM included. The
 % input arguement is only a string of the path to the main parent directory
@@ -80,7 +80,7 @@ function [] = ds(path, whisk, Aindex, mouseindex, sw)
                 dt = bsxfun(@minus,dt,nm);
                 dt = dt(:,whisk);
                 rownum = size(dt,1);
-                A(Aindex).Mice(mouseindex).Baseline(1:rownum,colnum + 9,depnum) = dt;
+                A(Aindex).Mice(mouseindex).Baseline2(1:rownum,colnum,depnum) = dt;
                 depnum = depnum + 1;
                 if depnum == 9
                    depnum = 1;
@@ -93,13 +93,12 @@ function [] = ds(path, whisk, Aindex, mouseindex, sw)
     A(Aindex).Mice(mouseindex).Vehicle(:,9,:) = nanmean( A(Aindex).Mice(mouseindex).Vehicle(:,1:8,:),2);
 end
 
-
+ 
 whisker_order = 0;
 mtype = [0 1 0 1 0 1 0 1 0 1 2 2 2 2 2 0 2 0 2 0 2 0 2 0 2 0 3 0 3 0 3 0 3 0 3];
 mlist = [0 1 0 1 0 1 0 1 0 1 1 1 1 1 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1];
 
 x = NaN(1550,9,8);
-x2 = NaN(1550,18,8);
 m = {'M1', 'M2', 'M3', 'M4', 'M5'};
 A(1:2) = struct('Mice',struct('Name', {},'Baseline',[],'Vehicle',[],'Drug',[],'Baseline2',[]));
 
@@ -107,7 +106,7 @@ for i = 1:2
     for j = 1:5
        A(i).Mice(j).Name = m(j);
        A(i).Mice(j).Baseline = x;
-       A(i).Mice(j).Baseline2 = x2;
+       A(i).Mice(j).Baseline2 = x;
        A(i).Mice(j).Vehicle = x;
        A(i).Mice(j).Drug = x;
     end
