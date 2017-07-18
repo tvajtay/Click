@@ -20,26 +20,25 @@ addpath(start_directory);
         cd(path)
         files = dir('*.whiskers'); %makes list of all created whiskers files
         cd(working_directory); %Returns to original working directory to have Whisk executables on path
+        
         M = size(files,1);
         for n = 1:M %Sequential loads and measures all whiskers files in the current directory
-            file = files(n);
-            measures = [file.name(1:end-8) 'measurements']; %Modifies filename for corresponding measurements file
-            fprintf(1,'Measuring %s\n',file.name);
-            stringm = sprintf('measure --face %s "%s\\%s" "%s\\%s" ', face_hint, path, file.name, path, measures);
+            measures = [files(n).name(1:end-8) 'measurements']; %Modifies filename for corresponding measurements file
+            fprintf(1,'Measuring %s\n',files(n).name);
+            stringm = sprintf('measure --face %s "%s\\%s" "%s\\%s" ', face_hint, path, files(n).name, path, measures);
             dos(stringm); %DOS command to run measurements.exe
         end
+        
         fprintf('Measurement complete\n')
 
         cd(path)
         files = dir('*.measurements'); %Creates List of Measurements files and their path
         cd(working_directory); 
-        M = size(files);
-        M = M(1);
+        M = size(files,1);
         for n = 1:M
             try
-            file = files(n);
-            fprintf(1,'Classifying %s\n',file.name);
-            stringc = sprintf('classify "%s\\%s" "%s\\%s" %s --px2mm 0.08 -n %1.0f ', path, file.name, path, file.name, face_hint, whisker);
+            fprintf(1,'Classifying %s\n',files(n).name);
+            stringc = sprintf('classify "%s\\%s" "%s\\%s" %s --px2mm 0.08 -n %1.0f ', path, files(n).name, path, files(n).name, face_hint, whisker);
             dos(stringc); %DOS command for classify.exe, classify and re-classify do not create new files, but modify the existing measurements files
             catch
                 continue;
@@ -54,9 +53,8 @@ addpath(start_directory);
         S = size(files1,1);
         for n = 1:S
             try
-            file = files1(n);
-            fprintf(1,'Re-Classifying %s\n',file.name);
-            stringc = sprintf('reclassify -n %1.0f "%s\\%s" "%s\\%s" ', whisker, path, file.name, path, file.name);
+            fprintf(1,'Re-Classifying %s\n',files1(n).name);
+            stringc = sprintf('reclassify -n %1.0f "%s\\%s" "%s\\%s" ', whisker, path, files1(n).name, path, files1(n).name);
             dos(stringc);
             catch
                 continue;
@@ -85,7 +83,7 @@ addpath(start_directory);
             figs = (whisks - 1);
             groups = (0:figs); %Creates row vector of the possible Whisker ID's
             for current_row = 1:rows %Cycle through all rows of measurements array
-                if table(current_row,2) >= 0; %If whisker candidate is labeled as a real whisker
+                if table(current_row,2) >= 0 %If whisker candidate is labeled as a real whisker
                     WID = table(current_row,2) == groups; %Find which whisker the row corresponds to
                     frame = (table(current_row,1) + 1); %Find the frame the data represents, add 1 since Whisk starts at 0
                     data_array(frame, WID) = table(current_row,3); %Populate matrix at Row == frame and Column == WID with angle data
