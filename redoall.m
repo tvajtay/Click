@@ -61,9 +61,8 @@ function redo_1(direction)
             name = [name 'mat'];
             cd(direction)
             save(name, 'data_array');
-            
+            c = {'r' 'g' 'b' 'm' 'y' 'c'};
             for t = 1:whisks
-                c = {'g' 'r' 'c' 'm' 'y' 'k'};
                 subplot(1,2,1);
                 plot(data_array(:,t), c{t});
                 hold on
@@ -73,17 +72,17 @@ function redo_1(direction)
             xlabel('Frame');
             ylabel('angle');
 
-            normal = nanmean(data_array(1:300,:));
-            data_array = bsxfun(@minus, data_array, normal);
-            average_angle = nanmean(data_array, 2);
+            normal = nanmean(data_array(1:300,:)); %Finds average during "quiet" initial period
+            data_array = bsxfun(@minus, data_array, normal); %Subtracts baseline from all data to normalize data
+            average_angle = nanmean(data_array, 2); %Averages normalized whiskers to get average movement
             subplot(1,2,2);
-            plot(average_angle, 'b');
+            plot(average_angle, 'k');
             H = sprintf('%s\n  Average Whisker angle', name(1:end-4));
             title(H);
             xlabel('Frame');
             ylabel('angle');
             header = name(1:end-4);
-            ER = sum(sum(isnan(data_array(350:600,:)),1),2);
+            ER = sum(sum(isnan(data_array(350:800,:)),1),2); %Do gaps in data exist during stimuli
             if ER > 0
                 figname = sprintf('%s-ERRORS', header);
                 fprintf('ERROR %s.mat has a critical gap in data\n', header);

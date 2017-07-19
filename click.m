@@ -94,8 +94,8 @@ addpath(start_directory);
             cd(path)
             save(name, 'data_array');
             
+            c = {'r' 'g' 'b' 'm' 'y' 'c'};
             for t = 1:whisks
-                c = {'g' 'r' 'c' 'm' 'y' 'k'};
                 subplot(1,2,1);
                 plot(data_array(:,t), c{t});
                 hold on
@@ -109,7 +109,7 @@ addpath(start_directory);
             data_array = bsxfun(@minus, data_array, normal); %Subtracts baseline from all data to normalize data
             average_angle = nanmean(data_array, 2); %Averages normalized whiskers to get average movement
             subplot(1,2,2);
-            plot(average_angle, 'b');
+            plot(average_angle, 'k');
             H = sprintf('%s\n  Average Whisker angle', name(1:end-4));
             title(H);
             xlabel('Frame');
